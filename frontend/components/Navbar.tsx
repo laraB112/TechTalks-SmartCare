@@ -40,14 +40,14 @@ export default function Navbar() {
                             href="/about"
                             className={pathname === "/about" ? activeNavLink : navLink}
                         >
-                            About
+                            About Us
                         </Link>
 
                         <Link
                             href="/services"
                             className={pathname === "/services" ? activeNavLink : navLink}
                         >
-                            Services
+                           Our Services
                         </Link>
 
                         <Link
@@ -61,7 +61,7 @@ export default function Navbar() {
                             href="/contact"
                             className={pathname === "/contact" ? activeNavLink : navLink}
                         >
-                            Contact
+                            Contact Us
                         </Link>
                     </div>
 
@@ -69,14 +69,14 @@ export default function Navbar() {
                     <div className="hidden md:flex items-center gap-4">
                         <Link
                             href="/login"
-                            className="px-5 py-2 rounded-md text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-300"
+                            className="px-5 py-2 rounded-md text-blue-600 border border-blue-600 hover:bg-blue-600 hover:text-white transition duration-500"
                         >
                             Login
                         </Link>
 
                         <Link
                             href="/register"
-                            className="px-5 py-2 rounded-md bg-blue-600 text-white border border-blue-600 hover:bg-white hover:text-blue-600 transition duration-300"
+                            className="px-5 py-2 rounded-md bg-blue-600 text-white border border-blue-600 hover:bg-white hover:text-blue-600 transition duration-500"
                         >
                             Register
                         </Link>
