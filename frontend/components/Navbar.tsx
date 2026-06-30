@@ -15,7 +15,7 @@ export default function Navbar() {
     const activeNavLink =
         "text-blue-600 border-b-2 border-blue-600 pb-1";
     return (
-        <nav className="bg-white shadow-md">
+        <nav className="sticky top-0 z-50 bg-white shadow-md">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="flex items-center justify-between h-16">
 
@@ -44,7 +44,7 @@ export default function Navbar() {
                         </Link>
 
                         <Link
-                            href="/services"
+                            href="/service"
                             className={pathname === "/services" ? activeNavLink : navLink}
                         >
                            Our Services

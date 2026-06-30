@@ -11,8 +11,8 @@ export default function Hero() {
             title: "Happy Patient"
         },
         {
-            number: "350+",
-            title: "Spacialist Doctor"
+            number: "150+",
+            title: "Specialist Doctor"
         },
         {
             number: "98%",
@@ -32,11 +32,6 @@ export default function Hero() {
                         <br />
                         doctors, Better care
                     </h1>
-                    <p className="text-gray-500 mt-6 mx-w-lg text-lg leading-8">
-                        You can monitor and manage your business with the platform
-                        <br />
-                        we will provide. You can monitor and manage your
-                    </p>
                     <div className="mt-10 ml-40">
                         <Link
                             href="/appointment"
@@ -64,7 +59,7 @@ export default function Hero() {
                 <div className="relative mt-6 flex w-full justify-center lg:mt-0 lg:w-1/2">
 
                     {/* Blue Glow */}
-                    <div className="absolute top-1/2 h-[450px] w-[450px] -translate-y-1/2 rounded-full bg-blue-500 blur-3xl" />
+                    <div className=" absolute top-1/2 h-[450px] w-[450px] -translate-y-1/2 rounded-full bg-blue-500 blur-3xl" />
 
                     <Image
                         src="/doctor.png"
