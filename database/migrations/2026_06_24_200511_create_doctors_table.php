@@ -5,25 +5,44 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-  public function up(): void
-{
-    Schema::create('doctors', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-        $table->foreignId('hospital_id')->constrained('hospitals')->onDelete('cascade');
-        $table->string('specialization');
-        $table->boolean('available')->default(true);
-        $table->timestamps();
-    });
-}
 
-    /**
-     * Reverse the migrations.
-     */
+{
+    public function up(): void
+    {
+        Schema::create('doctors', function (Blueprint $table) {
+            $table->id();
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->foreignId('specialization_id')
+                ->nullable()
+                ->constrained('specializations')
+                ->nullOnDelete();
+
+            $table->text('bio')->nullable();
+            $table->string('qualification')->nullable();
+            $table->unsignedSmallInteger('experience_years')->default(0);
+
+            $table->enum('gender', ['male', 'female'])->nullable();
+
+            $table->string('city')->nullable();
+            $table->string('address')->nullable();
+
+            $table->decimal('consultation_fee', 8, 2)->default(0);
+
+            $table->boolean('is_available')->default(true);
+
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->index('city');
+            $table->index('is_available');
+            $table->index('consultation_fee');
+        });
+    }
+
     public function down(): void
     {
         Schema::dropIfExists('doctors');

@@ -43,24 +43,24 @@ const features = [
 
 export default function WhyChooseUs() {
     return (
-        <section className="py-5">
-            <div className="mx-auto max-w-9xl px-6">
+        <section className="py-6 sm:py-10">
+            <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
                 {/* Heading */}
                 <div className="mb-16 text-center">
                     <span className="font-semibold uppercase tracking-[5px] text-blue-600">
                         Why Choose Us
                     </span>
 
-                    <h2 className="mt-5 text-5xl font-bold text-slate-900">
+                    <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900">
                         Your Health, Our Priority
                     </h2>
 
-                    <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-gray-500">
+                    <p className="mx-auto mt-5 max-w-2xl text-base sm:text-lg leading-8 text-gray-500">
                         We make doctor appointments simple, fast and reliable so
                         you can focus on what matters most.
                     </p>
                 </div>
-                    <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
                         {features.map((feature) => (
                             <FeatureCard
                                 key={feature.title}
