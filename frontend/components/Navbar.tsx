@@ -45,6 +45,13 @@ export default function Navbar() {
                         </Link>
 
                         <Link
+                            href="/patient/dashboard"
+                            className={pathname === "/patient/dashboard" ? activeNavLink : navLink}
+                        >
+                            Dashboard
+                        </Link>
+
+                        <Link
                             href="/about"
                             className={pathname === "/about" ? activeNavLink : navLink}
                         >
@@ -103,6 +110,14 @@ export default function Navbar() {
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 Home
+                            </Link>
+
+                            <Link
+                                href="/patient/dashboard"
+                                className={pathname === "/patient/dashboard" ? mobileActiveNavLink : mobileNavLink}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Dashboard
                             </Link>
 
                             <Link
