@@ -4,7 +4,7 @@ export default function EmergencyContactPage() {
   const emergencyContacts = [
     {
       title: "Emergency Ambulance",
-      number: "112",
+      number: "140",
       icon: Ambulance,
       description: "Call ambulance service immediately",
     },
@@ -44,15 +44,18 @@ export default function EmergencyContactPage() {
               key={contact.title}
               className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md"
             >
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
-                <Icon size={25} />
+              <div className="flex justify-center md:justify-start">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-600">
+                  <Icon size={25} />
+                </div>
+
               </div>
 
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="text-xl font-semibold text-gray-800 text-center md:text-start">
                 {contact.title}
               </h2>
 
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-gray-500 text-center md:text-start">
                 {contact.description}
               </p>
 

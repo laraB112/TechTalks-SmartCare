@@ -1,5 +1,5 @@
-import UpcomingAppointments from "../components/appointment/UpcomingAppoitment";
 
+import SymptomChecker from "../components/SymptomChecker";
 
 
 
@@ -8,7 +8,7 @@ import UpcomingAppointments from "../components/appointment/UpcomingAppoitment";
 export default function PatientDashboardPage() {
     return(
         <>
-        <UpcomingAppointments />
+        <SymptomChecker/>
         </>
     );
 }

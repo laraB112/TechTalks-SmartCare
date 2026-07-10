@@ -2,7 +2,7 @@ export type User = {
   id: number;
   name: string;
   email: string;
-  role: string;
+  role: "patient" | "doctor";
 };
 
 export function getUser(): User | null {
