@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Star, Briefcase, CalendarPlus } from "lucide-react";
 import { Doctor } from "./doctor";
+import Link from "next/link";
 
 type DoctorCardProps = {
   doctor: Doctor;
@@ -31,10 +32,12 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
           </div>
         </div>
 
-        <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700">
-          <CalendarPlus size={20} />
-          Book Appointment
-        </button>
+        <Link href={`/patient/dashboard/bookappointment/${doctor.id}`}>
+          <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700">
+            <CalendarPlus size={20} />
+            Book Appointment
+          </button>
+        </Link>
       </div>
     </div>
   );

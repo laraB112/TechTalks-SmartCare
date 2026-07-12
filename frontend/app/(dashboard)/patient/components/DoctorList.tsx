@@ -1,18 +1,53 @@
 "use client";
 
-import { doctors } from "./doctor";
+import { useEffect, useState } from "react";
+//import { doctors } from "./doctor";
 import DoctorCard from "./DoctorCard";
+
+type Doctor = {
+  id: number;
+  name: string;
+  specialty: string;
+  experience: number;
+};
 
 type DoctorListProps = {
   specialty: string;
 };
+export default function DoctorList({ specialty }: DoctorListProps) {
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default function DoctorList({
-  specialty,
-}: DoctorListProps) {
+  useEffect(() => {
+    async function fetchDoctors() {
+      try {
+        const response = await fetch(
+          "http://localhost:8000/api/doctors"
+        );
+
+        const data = await response.json();
+
+        setDoctors(data);
+      } catch (error) {
+        console.error("Failed to fetch doctors:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchDoctors();
+  }, []);
   const filteredDoctors = doctors.filter(
     (doctor) => doctor.specialty === specialty
   );
+
+  if (loading) {
+    return (
+      <p className="text-center text-gray-500">
+        Loading doctors...
+      </p>
+    );
+  }
 
   return (
     <section className="space-y-4">
