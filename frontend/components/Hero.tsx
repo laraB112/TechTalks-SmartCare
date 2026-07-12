@@ -21,14 +21,10 @@ export default function Hero() {
         <section className="bg-white">
             <div className="mx-auto flex min-h-[calc(100vh-80px)] max-w-7xl flex-col-reverse items-center justify-center gap-12 px-6 py-12 lg:flex-row lg:gap-0 lg:px-12">
 
-                {/* Left Content */}
-
                 <div className="w-full text-center lg:w-1/2 lg:text-left">
 
-                    <h1 className="text-4xl font-bold leading-tight sm:text-5xl  lg:text-6xl">
-                        Instant booking, Trusted
-                        <br />
-                        doctors, Better care
+                    <h1 className="text-4xl font-bold leading-tight sm:text-5xl  lg:text-6xl text-black">
+                        Instant booking Trusted doctors <br /> Better care
                     </h1>
                     <div className="mt-10 flex justify-center  lg:justify-start">
                         <Link

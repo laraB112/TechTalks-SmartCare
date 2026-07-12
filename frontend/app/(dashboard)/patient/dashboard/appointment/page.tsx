@@ -1,4 +1,4 @@
-import UpcomingAppointments from "../../components/appointment/UpcomingAppoitment";
+import UpcomingAppointments from "../../components/appointment/UpcomingAppointment";
 
 
 

@@ -51,7 +51,7 @@ export default function WhyChooseUs() {
                         Why Choose Us
                     </span>
 
-                    <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900">
+                    <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 text-white">
                         Your Health, Our Priority
                     </h2>
 
