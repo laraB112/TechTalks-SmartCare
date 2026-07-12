@@ -30,7 +30,7 @@ export default function Navbar() {
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2">
                         <HeartPulse className="w-8 h-8 text-blue-600" />
-                        <span className="text-2xl font-bold">
+                        <span className="text-2xl font-bold text-black">
                             Smart<span className="text-blue-600">Care</span>
                         </span>
                     </Link>
@@ -58,12 +58,6 @@ export default function Navbar() {
                             About Us
                         </Link>
 
-                        <Link
-                            href="/service"
-                            className={pathname === "/services" ? activeNavLink : navLink}
-                        >
-                            Our Services
-                        </Link>
 
                         <Link
                             href="/doctors"

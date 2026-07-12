@@ -11,7 +11,7 @@ export default function Footer() {
                     {/*logo*/}
                     <div>
                         <div className="flex items-center justify-center sm:justify-start gap-2 mb-4">
-                            <HeartPulse className="w-8 h-8 text-blue-700" size={20} />
+                            
                             <h3 className="text-white text-lg font-semibold">
                                 <span className="text-blue-600">
                                     Doctor
@@ -58,14 +58,6 @@ export default function Footer() {
                                 </Link>
                             </li>
 
-                            <li>
-                                <Link href="/contact" className="hover:text-blue-500 transition-colors duration-300">
-                                    <ChevronRight
-                                        size={16}
-                                        className="text-blue-500 inline-block mr-2"
-                                    />Our Services
-                                </Link>
-                            </li>
 
                             <li>
                                 <Link href="/login" className="hover:text-blue-500 transition-colors duration-300">

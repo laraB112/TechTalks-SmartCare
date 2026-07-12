@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { User, Mail, Lock, Eye, EyeOff, Phone, ChevronDown } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, Phone, ChevronDown, Home } from 'lucide-react';
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 
@@ -113,212 +113,255 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 sm:p-8 shadow-md">
-        <h2 className="block text-center text-2xl font-bold text-blue-600 mb-2">
-          Welcome to SmartCare
-        </h2>
-        <p className="text-center font-light mb-4">
-          Create an account to access our services.
-        </p>
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden p-4 sm:p-6 lg:p-8">
+      
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
+        style={{ 
+          backgroundImage: "url('https://thumbs.dreamstime.com/b/doctor-medical-background-24834402.jpg')" 
+        }}
+      >
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="absolute inset-0 backdrop-blur-[2px]"></div>
+      </div>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* Name */}
-          <div>
-            <label className="block mb-1" htmlFor="name">Name</label>
-            <div className="relative">
-              <User size={20} className="absolute left-2 top-2.5 text-gray-400" />
-              <input
-                id="name"
-                type="text"
-                className={`w-full border rounded-md px-3 py-2 pl-10 focus:outline-none 
-                          focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                          placeholder-transparent sm:placeholder-gray-400
-                          ${nameError ? "border-red-500" : "border-gray-500"}
-                `}
-                placeholder="Enter your name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setNameError('');
-                }}
-              />
-            </div>
-            {nameError && (
-              <p className="text-red-500 text-sm mt-1 text-center">
-                {nameError}
-              </p>
-            )}
+      {/* Register Form */}
+      <div className="relative z-10 w-full max-w-sm sm:max-w-md lg:max-w-lg px-3 sm:px-0">
+        <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 lg:p-10 border border-gray-100/80">
+          
+          {/* Home Icon (Top Left) */}
+          <div className="flex justify-between items-start mb-2">
+            <Link 
+              href="/" 
+              className="text-gray-400 hover:text-blue-600 transition-colors"
+              aria-label="Back to Home"
+            >
+              <Home className="w-5 h-5" />
+            </Link>
           </div>
-          {/* Email */}
-          <div>
-            <label className="block mb-1" htmlFor="email">Email</label>
-            <div className="relative">
-              <Mail size={20} className="absolute left-2 top-2.5 text-gray-400" />
-              <input
-                id="email"
-                type="email"
-                className={`w-full border rounded-md px-3 py-2 pl-10 focus:outline-none
-                         focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                         placeholder-transparent sm:placeholder-gray-400
-                         ${emailError ? "border-red-500" : "border-gray-500"}
-                `}
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setEmailError('');
-                }}
-              />
-            </div>
-            {emailError && (
-              <p className="text-red-500 text-sm mt-1 text-center">
-                {emailError}
-              </p>
-            )}
+
+          {/* Header */}
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-blue-600">
+              Welcome to SmartCare
+            </h2>
+            <p className="text-sm sm:text-base text-gray-600 mt-1">
+              Create an account to access our services.
+            </p>
           </div>
-          {/* Password */}
-          <div>
-            <label className="block mb-1" htmlFor="password">Password</label>
-            <div className="relative">
-              <Lock size={20} className="absolute left-2 top-2.5 text-gray-400" />
-              <input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                className={`w-full border rounded-md px-3 py-2 pl-10 focus:outline-none
-                         focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                         placeholder-transparent sm:placeholder-gray-400
-                         ${passwordError ? "border-red-500" : "border-gray-500"}
-                `}
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setPasswordError('');
-                }}
-              />
-              <button
-                type="button"
-                className="absolute right-2 top-2.5 text-gray-400"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
-              </button>
-            </div>
-            {passwordError && (
-              <p className="text-red-500 text-sm mt-1 text-center">
-                {passwordError}
-              </p>
-            )}
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+
+          <form className="space-y-4 sm:space-y-5" onSubmit={handleSubmit}>
+            
+            {/* Name */}
             <div>
-                <label className="block mb-1" htmlFor="age">Age</label>
+              <label className="block mb-1.5 text-sm font-medium text-gray-700" htmlFor="name">
+                Name
+              </label>
+              <div className="relative">
+                <User size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  id="name"
+                  type="text"
+                  className={`w-full border rounded-lg px-4 py-2.5 sm:py-3 pl-10 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    placeholder-gray-400 text-gray-900 text-sm sm:text-base
+                    ${nameError ? "border-red-500" : "border-gray-300"}
+                  `}
+                  placeholder="Enter your name"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setNameError('');
+                  }}
+                />
+              </div>
+              {nameError && (
+                <p className="mt-1.5 text-sm text-red-500 text-center">
+                  {nameError}
+                </p>
+              )}
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block mb-1.5 text-sm font-medium text-gray-700" htmlFor="email">
+                Email
+              </label>
+              <div className="relative">
+                <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  id="email"
+                  type="email"
+                  className={`w-full border rounded-lg px-4 py-2.5 sm:py-3 pl-10 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    placeholder-gray-400 text-gray-900 text-sm sm:text-base
+                    ${emailError ? "border-red-500" : "border-gray-300"}
+                  `}
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setEmailError('');
+                  }}
+                />
+              </div>
+              {emailError && (
+                <p className="mt-1.5 text-sm text-red-500 text-center">
+                  {emailError}
+                </p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block mb-1.5 text-sm font-medium text-gray-700" htmlFor="password">
+                Password
+              </label>
+              <div className="relative">
+                <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  className={`w-full border rounded-lg px-4 py-2.5 sm:py-3 pl-10 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    placeholder-gray-400 text-gray-900 text-sm sm:text-base
+                    ${passwordError ? "border-red-500" : "border-gray-300"}
+                  `}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setPasswordError('');
+                  }}
+                />
+                <button
+                  type="button"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                </button>
+              </div>
+              {passwordError && (
+                <p className="mt-1.5 text-sm text-red-500 text-center">
+                  {passwordError}
+                </p>
+              )}
+            </div>
+
+            {/* Age & Gender Row */}
+            <div className="grid grid-cols-2 gap-4">
               <div>
+                <label className="block mb-1.5 text-sm font-medium text-gray-700" htmlFor="age">
+                  Age
+                </label>
                 <input
                   id="age"
                   type="text"
-                  className={`w-full border rounded-md px-3 py-2 focus:outline-none
-                         focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                         placeholder-transparent sm:placeholder-gray-400
-                         ${ageError ? "border-red-500" : "border-gray-500"}
-                `}
-                  placeholder="Enter your age"
+                  className={`w-full border rounded-lg px-4 py-2.5 sm:py-3 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    placeholder-gray-400 text-gray-900 text-sm sm:text-base
+                    ${ageError ? "border-red-500" : "border-gray-300"}
+                  `}
+                  placeholder="Age"
                   value={age}
                   onChange={(e) => {
                     setAge(e.target.value);
                     setAgeError('');
                   }}
                 />
+                {ageError && (
+                  <p className="mt-1.5 text-sm text-red-500 text-center">
+                    {ageError}
+                  </p>
+                )}
               </div>
-              {ageError && (
-                <p className="text-red-500 text-sm mt-1 text-center">
-                  {ageError}
-                </p>
-              )}
+              <div>
+                <label className="block mb-1.5 text-sm font-medium text-gray-700" htmlFor="gender">
+                  Gender
+                </label>
+                <div className="relative">
+                  <select
+                    id="gender"
+                    className={`w-full border rounded-lg px-4 py-2.5 sm:py-3 appearance-none
+                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                      text-gray-900 text-sm sm:text-base bg-white
+                      ${genderError ? "border-red-500" : "border-gray-300"}
+                    `}
+                    value={gender}
+                    onChange={(e) => {
+                      setGender(e.target.value);
+                      setGenderError('');
+                    }}
+                  >
+                    <option value="" disabled>Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                  <ChevronDown
+                    size={18}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                  />
+                </div>
+                {genderError && (
+                  <p className="mt-1.5 text-sm text-red-500 text-center">
+                    {genderError}
+                  </p>
+                )}
+              </div>
             </div>
+
+            {/* Phone Number */}
             <div>
-                <label className="block mb-1" htmlFor="gender">Gender</label>
+              <label className="block mb-1.5 text-sm font-medium text-gray-700" htmlFor="phone">
+                Phone Number
+              </label>
               <div className="relative">
-                <select
-                  id="gender"
-                  className={`w-full border rounded-md px-3 py-2.5 focus:outline-none
-                         focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                         appearance-none 
-                         ${genderError ? "border-red-500" : "border-gray-500"}
-                `}
-                  value={gender}
+                <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  id="phone"
+                  type="tel"
+                  className={`w-full border rounded-lg px-4 py-2.5 sm:py-3 pl-10 
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+                    placeholder-gray-400 text-gray-900 text-sm sm:text-base
+                    ${phoneError ? "border-red-500" : "border-gray-300"}
+                  `}
+                  placeholder="Enter your phone number"
+                  value={phone}
                   onChange={(e) => {
-                    setGender(e.target.value);
-                    setGenderError('');
+                    setPhone(e.target.value);
+                    setPhoneError('');
                   }}
-                >
-                  <option value="" disabled>Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-                <ChevronDown
-                  size={20}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                 />
               </div>
-              {genderError && (
-                <p className="text-red-500 text-sm mt-1 text-center">
-                  {genderError}
+              {phoneError && (
+                <p className="mt-1.5 text-sm text-red-500 text-center">
+                  {phoneError}
                 </p>
               )}
             </div>
-          </div>
-          {/* Phone Number */}
-          <div>
-              <label className="block mb-1" htmlFor="phone">Phone Number</label>
-            <div className="relative">
-              <Phone
-                size={20}
-                className="absolute left-2 top-2.5 text-gray-400"
-              />
-              <input
-                id="phone"
-                type="tel"
-                className={`w-full border rounded-md px-3 py-2 pl-10 focus:outline-none
-                       focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                       placeholder-transparent sm:placeholder-gray-400
-                       ${phoneError ? "border-red-500" : "border-gray-500"}
-                `}
-                placeholder="Enter your phone number"
-                value={phone}
-                onChange={(e) => {
-                  setPhone(e.target.value);
-                  setPhoneError('');
-                }}
-              />
-            </div>
-            {phoneError && (
-              <p className="text-red-500 text-sm mt-1 text-center">
-                {phoneError}
-              </p>
-            )}
-          </div>
 
-
-          {/* Clicked button */}
-          <button
-            type="submit"
-            className="w-full rounded-md bg-blue-600 hover:bg-blue-700 transition duration-200 py-2 text-white cursor-pointer "
-          >
-            Create Account
-          </button>
-        </form>
-        <div className="mt-3 text-center">
-          <p>
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="text-blue-500 font-medium"
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 transition duration-200 text-white py-2.5 sm:py-3 rounded-lg cursor-pointer shadow-lg shadow-blue-600/30 text-sm sm:text-base font-medium"
             >
-              Sign In
-            </Link>
-          </p>
+              Create Account
+            </button>
+          </form>
+
+          <div className="mt-4 sm:mt-6 text-center">
+            <p className="text-sm sm:text-base text-gray-600">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="text-blue-500 font-medium hover:text-blue-600 transition-colors"
+              >
+                Sign In
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

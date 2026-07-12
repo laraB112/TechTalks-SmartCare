@@ -87,14 +87,14 @@ export default function Sidebar({ role }: SidebarProps) {
                       ${isOpen ? "translate-x-0" : "-translate-x-full"}
                        md:static md:translate-x-0 md:flex `}
       >
-        {/* Logo */}
+
         <div className="flex items-center gap-3 border-b border-gray-200 px-6 py-6">
           <div className="">
             <HeartPulse className="h-11 w-11 text-blue-600" />
           </div>
 
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">
+            <h1 className="text-2xl font-bold text-black">
               Smart<span className="text-blue-600">Care</span>
             </h1>
 
@@ -131,7 +131,6 @@ export default function Sidebar({ role }: SidebarProps) {
           })}
         </nav>
 
-        {/* Logout */}
         <div className="border-t border-gray-200 pb-20">
           <button
             onClick={handleLogout}

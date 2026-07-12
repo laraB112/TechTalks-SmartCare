@@ -1,4 +1,4 @@
-import AppointmentForm from "../../components/appointment/AppointmentForm";
+import AppointmentForm from "../components/appointment/AppointmentForm";
 
 export default function BookAppointmentPage() {
   return (

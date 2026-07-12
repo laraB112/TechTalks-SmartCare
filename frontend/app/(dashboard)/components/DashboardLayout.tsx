@@ -1,6 +1,4 @@
 
-
-
 import { ReactNode } from "react";
 import SideBar from "./SideBar";
 import TopNavBar from "./TopNavBar";
