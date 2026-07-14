@@ -14,7 +14,6 @@ class AppointmentController extends Controller
     {
         $validated = $request->validate([
             'doctor_id' => 'required|exists:doctors,id',
-            'hospital_id' => 'required|exists:hospitals,id',
             'specialization' => 'required|string',
             'date' => 'required|date|after:today',
             'time' => 'required',
@@ -24,7 +23,6 @@ class AppointmentController extends Controller
         $appointment = Appointment::create([
             'patient_id' => Auth::id(),
             'doctor_id' => $validated['doctor_id'],
-            'hospital_id' => $validated['hospital_id'],
             'specialization' => $validated['specialization'],
             'date' => $validated['date'],
             'time' => $validated['time'],

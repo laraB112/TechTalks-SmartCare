@@ -1,74 +1,44 @@
 "use client";
 
-import { useEffect, useState } from "react";
-//import { doctors } from "./doctor";
+import { Doctor } from "./doctor";
 import DoctorCard from "./DoctorCard";
 
-type Doctor = {
-  id: number;
-  name: string;
-  specialty: string;
-  experience: number;
-};
-
 type DoctorListProps = {
-  specialty: string;
+  doctors: Doctor[];
+  loading?: boolean;
+  error?: string;
 };
-export default function DoctorList({ specialty }: DoctorListProps) {
-  const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchDoctors() {
-      try {
-        const response = await fetch(
-          "http://TechTalks-SmartCare.test/api/doctors"
-        );
-
-        const data = await response.json();
-
-        setDoctors(data);
-      } catch (error) {
-        console.error("Failed to fetch doctors:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchDoctors();
-  }, []);
-  const filteredDoctors = doctors.filter(
-    (doctor) => doctor.specialty === specialty
-  );
-
+export default function DoctorList({ doctors, loading, error }: DoctorListProps) {
   if (loading) {
     return (
-      <p className="text-center text-gray-500">
-        Loading doctors...
-      </p>
+      <div className="flex items-center justify-center py-8">
+        <p className="text-gray-500">Loading doctors...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
+
+  if (doctors.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <p className="text-gray-500">No doctors available.</p>
+      </div>
     );
   }
 
   return (
-    <section className="space-y-4">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 text-center md:text-start">
-          Available Doctors
-        </h2>
-
-        <p className="text-gray-600 text-center md:text-start">
-          Choose a doctor from the recommended specialty.
-        </p>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {filteredDoctors.map((doctor) => (
-          <DoctorCard
-            key={doctor.id}
-            doctor={doctor}
-          />
-        ))}
-      </div>
-    </section>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {doctors.map((doctor) => (
+        <DoctorCard key={doctor.id} doctor={doctor} />
+      ))}
+    </div>
   );
 }

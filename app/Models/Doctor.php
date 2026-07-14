@@ -25,11 +25,10 @@ class Doctor extends Model
         'is_available',
     ];
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
+    public function user()
+{
+    return $this->belongsTo(User::class);
+}
     protected $casts = [
         'experience_years' => 'integer',
         'consultation_fee' => 'decimal:2',

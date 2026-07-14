@@ -84,7 +84,7 @@ export default function LoginPage() {
     return (
         <div className="relative min-h-screen flex items-center justify-center overflow-hidden p-4 sm:p-6 lg:p-8">
             
-            {/* Background Image */}
+            
             <div 
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
                 style={{ 
@@ -95,7 +95,6 @@ export default function LoginPage() {
                 <div className="absolute inset-0 backdrop-blur-[2px]"></div>
             </div>
 
-            {/* Login Form */}
             <div className="relative z-10 w-full max-w-sm sm:max-w-md lg:max-w-lg px-3 sm:px-0">
                 <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 lg:p-10 border border-gray-100/80">
                     

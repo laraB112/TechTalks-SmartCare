@@ -49,14 +49,6 @@ export default function Footer() {
                                 </Link>
                             </li>
 
-                            <li>
-                                <Link href="/doctors" className="hover:text-blue-500 transition-colors duration-300">
-                                    <ChevronRight
-                                        size={16}
-                                        className="text-blue-500 inline-block mr-2"
-                                    />Doctors
-                                </Link>
-                            </li>
 
 
                             <li>
