@@ -4,13 +4,9 @@ import Link from "next/link";
 import { logout } from "@/app/lib/auth";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Calendar,
   HeartPulse,
   Home,
   LogOut,
-  Settings,
-  User,
-  Users,
   PhoneCall,
   Menu,
   X,
@@ -43,26 +39,6 @@ export default function Sidebar({ role }: SidebarProps) {
       title: "Dashboard",
       href: "/doctor/dashboard",
       icon: Home,
-    },
-    {
-      title: "Patients",
-      href: "/doctor/patients",
-      icon: Users,
-    },
-    {
-      title: "Schedule",
-      href: "/doctor/schedule",
-      icon: Calendar,
-    },
-    {
-      title: "Profile",
-      href: "/doctor/profile",
-      icon: User,
-    },
-    {
-      title: "Settings",
-      href: "/doctor/settings",
-      icon: Settings,
     },
   ];
 

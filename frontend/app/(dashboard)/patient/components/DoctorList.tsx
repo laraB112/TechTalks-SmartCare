@@ -22,7 +22,7 @@ export default function DoctorList({ specialty }: DoctorListProps) {
     async function fetchDoctors() {
       try {
         const response = await fetch(
-          "http://localhost:8000/api/doctors"
+          "http://TechTalks-SmartCare.test/api/doctors"
         );
 
         const data = await response.json();

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Star, Briefcase, CalendarPlus } from "lucide-react";
+import { Briefcase, CalendarPlus } from "lucide-react";
 import { Doctor } from "./doctor";
 import Link from "next/link";
 
