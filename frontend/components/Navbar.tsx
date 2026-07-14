@@ -44,12 +44,6 @@ export default function Navbar() {
                             Home
                         </Link>
 
-                        <Link
-                            href="/patient/dashboard"
-                            className={pathname === "/patient/dashboard" ? activeNavLink : navLink}
-                        >
-                            Dashboard
-                        </Link>
 
                         <Link
                             href="/about"
@@ -59,12 +53,6 @@ export default function Navbar() {
                         </Link>
 
 
-                        <Link
-                            href="/doctors"
-                            className={pathname === "/doctors" ? activeNavLink : navLink}
-                        >
-                            Doctors
-                        </Link>
                     </div>
 
                     {/* Desktop Buttons */}

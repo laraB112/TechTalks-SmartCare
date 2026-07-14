@@ -3,7 +3,8 @@
 import { getUser, User, logout } from "@/app/lib/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LogOut, User as UserIcon, HeartPulse } from "lucide-react";
+import { LogOut, User as UserIcon, HeartPulse, Home } from "lucide-react";
+import Link from "next/link";
 
 type TopNavbarProps = {
   patientName?: string;
@@ -43,10 +44,16 @@ export default function TopNavbar({ patientName = "patient" }: TopNavbarProps) {
         <p className="text-sm text-gray-500">Welcome back!</p>
       </div>
 
-      {/* Right: Actions */}
       <div className="flex items-center gap-3 sm:gap-4">
-       
-    
+ 
+        <Link
+          href="/"
+          className="text-gray-500 hover:text-blue-600 transition-colors p-2 hover:bg-blue-50 rounded-lg"
+          title="Go to Home"
+        >
+          <Home className="w-5 h-5" />
+        </Link>
+
 
         {/* Logout */}
         <button
