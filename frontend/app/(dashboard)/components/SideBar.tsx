@@ -7,7 +7,6 @@ import {
   Calendar,
   HeartPulse,
   Home,
-  LogOut,
   Settings,
   User,
   Users,
@@ -25,18 +24,28 @@ export default function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  const patientLinks = [
-    {
-      title: "Dashboard",
-      href: "/patient/dashboard",
-      icon: Home,
-    },
-    {
-      title: "Emergency Contact",
-      href: "/patient/dashboard/emergency-contact",
-      icon: PhoneCall,
-    },
-  ];
+ const patientLinks = [
+  {
+    title: "Dashboard",
+    href: "/patient/dashboard",
+    icon: Home,
+  },
+  {
+    title: "My Appointments",     
+    href: "/patient/dashboard/appointments",
+    icon: Calendar,
+  },
+  {
+    title: "Profile",             
+    href: "/patient/dashboard/profile",
+    icon: User,
+  },
+  {
+    title: "Emergency Contact",
+    href: "/patient/dashboard/emergency-contact",
+    icon: PhoneCall,
+  },
+];
 
   const doctorLinks = [
     {
@@ -69,10 +78,7 @@ export default function Sidebar({ role }: SidebarProps) {
   const links = role === "patient" ? patientLinks : doctorLinks;
   const router = useRouter();
 
-  function handleLogout() {
-    logout();
-    router.push("/login");
-  }
+
   return (
     <>
       <button
@@ -131,15 +137,6 @@ export default function Sidebar({ role }: SidebarProps) {
           })}
         </nav>
 
-        <div className="border-t border-gray-200 pb-20">
-          <button
-            onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm 
-                         font-medium text-red-500 transition hover:bg-red-50">
-            <LogOut size={20} />
-            Logout
-          </button>
-        </div>
       </aside>
     </>
   );

@@ -32,6 +32,7 @@ Route::get('specializations', [SpecializationController::class, 'index']);
 // Protected Routes (Require Authentication)
 // ================================================
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/doctors/{doctor}/available-slots', [DoctorController::class, 'availableSlots']);
 
     // User
     Route::get('/user', function (Request $request) {

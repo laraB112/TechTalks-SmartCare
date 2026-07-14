@@ -1,43 +1,61 @@
 "use client";
 
-import { getUser, User } from "@/app/lib/auth";
+import { getUser, User, logout } from "@/app/lib/auth";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { LogOut, User as UserIcon, HeartPulse } from "lucide-react";
 
 type TopNavbarProps = {
   patientName?: string;
 };
 
-export default function TopNavbar({ patientName = "patient"} : TopNavbarProps) {
-
+export default function TopNavbar({ patientName = "patient" }: TopNavbarProps) {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-
 
   useEffect(() => {
     setUser(getUser());
   }, []);
 
   const hours = new Date().getHours();
+  let greeting = "";
 
-    let greeting = "";
+  if (hours >= 5 && hours < 12) {
+    greeting = "Good Morning";
+  } else if (hours >= 12 && hours < 17) {
+    greeting = "Good Afternoon";
+  } else {
+    greeting = "Good Evening";
+  }
 
-    if (hours >= 5 && hours < 12) {
-        greeting = "Good Morning";
-    } else if (hours >= 12 && hours < 17) {
-        greeting = "Good Afternoon";
-    } else {
-        greeting = "Good Evening";
-    }
+  const handleLogout = () => {
+    logout();
+    router.push("/login");
+  };
 
   return (
-    <header className="sticky top-0 z-10 h-20 
-                       border-b border-gray-200 bg-white px-6">
+    <header className="sticky top-0 z-10 h-20 border-b border-gray-200 bg-white px-4 sm:px-6 flex items-center justify-between">
+      {/* Left: Greeting */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800 text-center md:text-start pt-3">
-          {greeting},  {user ? user.name : "Patient"}
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+          {greeting}, {user?.name || "Patient"}
         </h1>
-        <p className="text-sm text-gray-500 text-center md:text-start">
-          Welcome back!
-        </p>
+        <p className="text-sm text-gray-500">Welcome back!</p>
+      </div>
+
+      {/* Right: Actions */}
+      <div className="flex items-center gap-3 sm:gap-4">
+       
+    
+
+        {/* Logout */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          <span className="hidden sm:inline">Logout</span>
+        </button>
       </div>
     </header>
   );
