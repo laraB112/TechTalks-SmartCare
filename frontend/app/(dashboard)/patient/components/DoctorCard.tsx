@@ -21,7 +21,7 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
       <div className="space-y-4 p-5">
         <div>
           <h3 className="text-xl font-bold text-gray-900 text-center">
-            Dr. {doctor.name || "Unknown"}
+            {doctor.name || "Unknown"}
           </h3>
           <p className="text-blue-600 font-medium text-center">
             {doctor.specialty}
