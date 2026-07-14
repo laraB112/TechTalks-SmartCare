@@ -264,7 +264,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               <div>
                 <p className="text-sm text-gray-500">Name</p>
                 <p className="text-base sm:text-lg font-semibold text-gray-900">
-                  Dr. {doctor.name}
+                 {doctor.name}
                 </p>
               </div>
               <div>

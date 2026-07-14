@@ -225,7 +225,7 @@ export default function AppointmentsPage() {
                             <User className="w-4 h-4 text-blue-600" />
                           </div>
                           <span className="text-sm font-medium text-gray-900">
-                            Dr. {appointment.doctor?.user?.name || "N/A"}
+                           {appointment.doctor?.user?.name || "N/A"}
                           </span>
                         </div>
                       </td>

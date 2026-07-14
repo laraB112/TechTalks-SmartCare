@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Search, Loader2 } from "lucide-react";
 import DoctorList from "./DoctorList";
 import { Doctor } from "./doctor";
-import { specialties, Specialty } from "./specialties"; // ← Import the mapping
+import { specialties, Specialty } from "./specialties"; 
 
 export default function SymptomChecker() {
   const [symptoms, setSymptoms] = useState("");
