@@ -107,7 +107,7 @@ export default function RegisterPage() {
     }
 
     try {
-      const response = await fetch("http://TechTalks-SmartCare.test/api/register", {
+      const response = await fetch("http://localhost:8000/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

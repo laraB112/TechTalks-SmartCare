@@ -41,7 +41,7 @@ export default function LoginPage() {
         if (!isValid) return;
 
         try {
-            const response = await fetch("http://TechTalks-SmartCare.test/api/login", {
+            const response = await fetch("http://localhost:8000/api/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

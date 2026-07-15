@@ -1,8 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Star, Briefcase, CalendarPlus } from "lucide-react";
+import {Briefcase, CalendarPlus } from "lucide-react";
 import { Doctor } from "./doctor";
+import { useRouter } from "next/navigation";
 
 type DoctorCardProps = {
   doctor: Doctor;

@@ -28,7 +28,7 @@ export default function Hero() {
                     </h1>
                     <div className="mt-10 flex justify-center  lg:justify-start">
                         <Link
-                            href="/appointment"
+                            href="/login"
                             className=" border rounded-lg bg-blue-600 text-white px-8 py-4 font-semibold transition duration-500 hover:text-blue-600 hover:bg-white"
                         >
                             Book Appointment
