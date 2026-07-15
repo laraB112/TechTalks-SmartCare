@@ -45,7 +45,7 @@ export default function TopNavbar({ patientName = "patient" }: TopNavbarProps) {
       </div>
 
       <div className="flex items-center gap-3 sm:gap-4">
- 
+
         <Link
           href="/"
           className="text-gray-500 hover:text-blue-600 transition-colors p-2 hover:bg-blue-50 rounded-lg"
@@ -55,11 +55,11 @@ export default function TopNavbar({ patientName = "patient" }: TopNavbarProps) {
         </Link>
 
 
-        {/* Logout */}
+
         <button
           onClick={handleLogout}
           className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
-        >
+          suppressHydrationWarning  >
           <LogOut className="w-4 h-4" />
           <span className="hidden sm:inline">Logout</span>
         </button>

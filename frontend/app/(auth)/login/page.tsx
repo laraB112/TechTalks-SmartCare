@@ -33,7 +33,7 @@ export default function LoginPage() {
         if (!password.trim()) {
             setPasswordError("Password is required");
             isValid = false;
-        } else if (password.length < 7) {
+        } else if (password.length < 4) {
             setPasswordError("Password must be at least 7 characters.");
             isValid = false;
         }
@@ -41,7 +41,7 @@ export default function LoginPage() {
         if (!isValid) return;
 
         try {
-            const response = await fetch("http://localhost:8000/api/login", {
+            const response = await fetch("http://TechTalks-SmartCare.test/api/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

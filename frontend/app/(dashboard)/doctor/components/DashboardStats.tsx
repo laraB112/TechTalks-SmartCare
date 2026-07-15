@@ -1,77 +1,71 @@
 "use client";
 
+import { Calendar, Users, Clock, CheckCircle } from "lucide-react";
 
-import { CalendarDays, Clock3 } from "lucide-react";
-import { useEffect, useState } from "react";
+interface DashboardStatsProps {
+    todayCount?: number;
+    totalCount?: number;
+    pendingCount?: number;
+    completedCount?: number;
+}
 
-
-
-
-export default function DashboardStats() {
-    const [todayAppointments, setTodayAppointments] = useState(0);
-    const [upcomingAppointments, setUpcomingAppointments] = useState(0);
-
-
-    const API_URL = "http://techtalks-smartcare.test/api";
-
-    async function getDoctorDashboard() {
-        const token = localStorage.getItem("token");
-
-        const response = await fetch(
-            `${API_URL}/doctor/dashboard`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: "application/json",
-                },
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error("Failed to fetch dashboard stats");
-        }
-
-        return response.json();
-    }
-
-
-   useEffect(() => {
-    async function loadDashboard() {
-        try {
-            const data = await getDoctorDashboard();
-
-            setTodayAppointments(data.todayAppointments);
-            setUpcomingAppointments(data.upcomingAppointments);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    loadDashboard();
-}, []);
+export default function DashboardStats({ 
+    todayCount = 0, 
+    totalCount = 0, 
+    pendingCount = 0, 
+    completedCount = 0 
+}: DashboardStatsProps) {
     return (
-        <div className="grid gap-6 md:grid-cols-2">
-            <div className="flex items-center gap-4  border bg-white p-6 shadow-sm">
-                <div className="rounded-xl bg-blue-100 p-3">
-                    <CalendarDays className="text-blue-600" size={28} />
-                </div>
-
-                <div>
-                    <p className="text-sm text-gray-500">Today's Appointments</p>
-                    <h2 className="text-3xl font-bold">{todayAppointments}</h2>
-                    <p className="text-sm text-blue-600">Scheduled today</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 mb-6">
+            {/* Today */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className="text-sm font-medium text-gray-500">Today's Appointments</p>
+                        <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{todayCount}</p>
+                    </div>
+                    <div className="p-3 bg-blue-100 rounded-xl">
+                        <Calendar className="w-6 h-6 text-blue-600" />
+                    </div>
                 </div>
             </div>
 
-            <div className="flex items-center gap-4  border bg-white p-6 shadow-sm">
-                <div className="rounded-xl bg-purple-100 p-3">
-                    <Clock3 className="text-purple-600" size={28} />
+            {/* Total */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className="text-sm font-medium text-gray-500">Total Appointments</p>
+                        <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{totalCount}</p>
+                    </div>
+                    <div className="p-3 bg-purple-100 rounded-xl">
+                        <Users className="w-6 h-6 text-purple-600" />
+                    </div>
                 </div>
+            </div>
 
-                <div>
-                    <p className="text-sm text-gray-500">Upcoming Appointments</p>
-                    <h2 className="text-3xl font-bold">{upcomingAppointments}</h2>
-                    <p className="text-sm text-purple-600">Future appointments</p>
+            {/* Pending */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className="text-sm font-medium text-gray-500">Pending</p>
+                        <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{pendingCount}</p>
+                    </div>
+                    <div className="p-3 bg-yellow-100 rounded-xl">
+                        <Clock className="w-6 h-6 text-yellow-600" />
+                    </div>
+                </div>
+            </div>
+
+            {/* Completed */}
+            <div className="bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className="text-sm font-medium text-gray-500">Completed</p>
+                        <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{completedCount}</p>
+                    </div>
+                    <div className="p-3 bg-green-100 rounded-xl">
+                        <CheckCircle className="w-6 h-6 text-green-600" />
+                    </div>
                 </div>
             </div>
         </div>

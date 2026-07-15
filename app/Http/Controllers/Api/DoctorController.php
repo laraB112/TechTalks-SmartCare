@@ -3,14 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Appointment; 
+use App\Models\Appointment;
 use App\Http\Requests\StoreDoctorRequest;
 use App\Http\Requests\UpdateDoctorRequest;
 use App\Http\Resources\DoctorResource;
 use App\Models\Doctor;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class DoctorController extends Controller
@@ -31,6 +33,7 @@ class DoctorController extends Controller
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ]);
 
+
         $sortDir = $validated['sort_dir'] ?? 'desc';
         $perPage = $validated['per_page'] ?? 15;
 
@@ -43,9 +46,8 @@ class DoctorController extends Controller
         $sortBy = in_array($sortBy, $allowedSorts) ? $sortBy : 'experience_years';
 
         $query = Doctor::query()
-            ->with(['user', 'specialization']);  // ← Added 'user' relationship
+            ->with(['user', 'specialization']);
 
-        // ✅ SEARCH: Search by name, specialty, or experience
         if (!empty($validated['search'])) {
             $search = $validated['search'];
             $query->where(function ($q) use ($search) {
@@ -57,7 +59,6 @@ class DoctorController extends Controller
             });
         }
 
-        // ✅ FILTER: Apply other filters
         if (!empty($validated['specialization_id'])) {
             $query->where('specialization_id', $validated['specialization_id']);
         }
@@ -140,38 +141,170 @@ class DoctorController extends Controller
 
         return response()->noContent();
     }
+
     public function availableSlots(Request $request, Doctor $doctor)
-{
-    $request->validate([
-        'date' => 'required|date|after_or_equal:today',
-    ]);
+    {
+        $request->validate([
+            'date' => 'required|date|after_or_equal:today',
+        ]);
 
-    $date = $request->date;
+        $date = $request->date;
 
-    // ✅ Define all possible time slots (e.g., 9 AM to 5 PM, hourly)
-    $allSlots = [
-        '09:00', '10:00', '11:00', '12:00', 
-        '13:00', '14:00', '15:00', '16:00', '17:00'
-    ];
+        $allSlots = [
+            '09:00',
+            '10:00',
+            '11:00',
+            '12:00',
+            '13:00',
+            '14:00',
+            '15:00',
+            '16:00',
+            '17:00'
+        ];
 
-    // ✅ Get booked appointments for this doctor on this date
-    $bookedSlots = Appointment::where('doctor_id', $doctor->id)
-        ->where('date', $date)
-        ->whereIn('status', ['pending', 'confirmed', 'in_progress'])
-        ->pluck('time')
-        ->map(function ($time) {
-            return substr($time, 0, 5); // Format: 'HH:MM'
-        })
-        ->toArray();
+        $bookedSlots = Appointment::where('doctor_id', $doctor->id)
+            ->where('date', $date)
+            ->whereIn('status', ['pending', 'confirmed', 'in_progress'])
+            ->pluck('time')
+            ->map(function ($time) {
+                return substr($time, 0, 5);
+            })
+            ->toArray();
 
-    // ✅ Filter out booked slots
-    $availableSlots = array_diff($allSlots, $bookedSlots);
+        $availableSlots = array_diff($allSlots, $bookedSlots);
 
-    return response()->json([
-        'date' => $date,
-        'available_slots' => array_values($availableSlots),
-        'booked_slots' => $bookedSlots,
-        'all_slots' => $allSlots,
-    ]);
-}
+        return response()->json([
+            'date' => $date,
+            'available_slots' => array_values($availableSlots),
+            'booked_slots' => $bookedSlots,
+            'all_slots' => $allSlots,
+        ]);
+    }
+
+    // ✅ Get patients for the logged-in doctor
+    public function patients(Request $request)
+    {
+        try {
+            $doctor = Doctor::where('user_id', Auth::id())->firstOrFail();
+
+            $appointments = Appointment::where('doctor_id', $doctor->id)
+                ->with(['patient'])
+                ->get();
+
+            $patients = $appointments->groupBy('patient_id')->map(function ($appointments) {
+                $patient = $appointments->first()->patient;
+
+                // ✅ Convert status to string before checking
+                $completedAppointments = $appointments->filter(function ($apt) {
+                    $status = $apt->status; // This is an Enum object
+                    // ✅ Check if status is 'completed' (Enum comparison)
+                    return $status->value === 'completed' || $status->value === 'Completed';
+                });
+
+                $lastVisit = $completedAppointments->isNotEmpty()
+                    ? $completedAppointments->sortByDesc('date')->first()->date
+                    : null;
+
+                return [
+                    'id' => $patient->id,
+                    'name' => $patient->name,
+                    'email' => $patient->email,
+                    'phone' => $patient->phone,
+                    'age' => $patient->age,
+                    'gender' => $patient->gender,
+                    'appointments_count' => $appointments->count(),
+                    'last_visit' => $lastVisit,
+                ];
+            })->values();
+
+            return response()->json([
+                'data' => $patients
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Patients error: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Error fetching patients',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function profile(Request $request)
+    {
+        try {
+            $doctor = Doctor::with(['user', 'specialization'])
+                ->where('user_id', Auth::id())
+                ->firstOrFail();
+
+            return response()->json([
+                'data' => [
+                    'id' => $doctor->id,
+                    'name' => $doctor->user->name,
+                    'email' => $doctor->user->email,
+                    'phone' => $doctor->user->phone,
+                    'gender' => $doctor->user->gender,
+                    'age' => $doctor->user->age,
+                    'specialization' => $doctor->specialization?->name,
+                    'specialization_id' => $doctor->specialization_id,
+                    'experience_years' => $doctor->experience_years,
+                    'consultation_fee' => $doctor->consultation_fee,
+                    'city' => $doctor->city,
+                    'address' => $doctor->address,
+                    'bio' => $doctor->bio,
+                    'is_available' => $doctor->is_available,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error fetching profile',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateProfile(Request $request)
+    {
+        try {
+            $doctor = Doctor::with(['user'])
+                ->where('user_id', Auth::id())
+                ->firstOrFail();
+
+            $validated = $request->validate([
+                'name' => 'sometimes|string|max:255',
+                'phone' => 'sometimes|string|max:20',
+                'city' => 'sometimes|string|max:100',
+                'address' => 'sometimes|string|max:255',
+                'bio' => 'sometimes|string|nullable',
+                'consultation_fee' => 'sometimes|numeric|min:0',
+                'experience_years' => 'sometimes|integer|min:0',
+                'is_available' => 'sometimes|boolean',
+            ]);
+
+            // Update user (name, phone)
+            if (isset($validated['name']) || isset($validated['phone'])) {
+                $doctor->user->update([
+                    'name' => $validated['name'] ?? $doctor->user->name,
+                    'phone' => $validated['phone'] ?? $doctor->user->phone,
+                ]);
+            }
+
+            // Update doctor
+            $doctor->update([
+                'city' => $validated['city'] ?? $doctor->city,
+                'address' => $validated['address'] ?? $doctor->address,
+                'bio' => $validated['bio'] ?? $doctor->bio,
+                'consultation_fee' => $validated['consultation_fee'] ?? $doctor->consultation_fee,
+                'experience_years' => $validated['experience_years'] ?? $doctor->experience_years,
+                'is_available' => $validated['is_available'] ?? $doctor->is_available,
+            ]);
+
+            return $this->profile($request);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error updating profile',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

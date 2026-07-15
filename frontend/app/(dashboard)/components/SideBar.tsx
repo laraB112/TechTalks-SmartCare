@@ -49,12 +49,23 @@ export default function Sidebar({ role }: SidebarProps) {
 ];
 
   const doctorLinks = [
-    {
-      title: "Dashboard",
-      href: "/doctor/dashboard",
-      icon: Home,
-    },
-  ];
+  {
+    title: "Dashboard",
+    href: "/doctor/dashboard",
+    icon: Home,
+  },
+  {
+    title: "Patients",
+    href: "/doctor/dashboard/patients",
+    icon: Users,
+  },
+  {
+    title: "Profile",
+    href: "/doctor/dashboard/profile",
+    icon: User,
+  },
+ 
+];
 
   const links = role === "patient" ? patientLinks : doctorLinks;
   const router = useRouter();
@@ -117,8 +128,10 @@ export default function Sidebar({ role }: SidebarProps) {
             );
           })}
         </nav>
+        
 
       </aside>
     </>
   );
+  
 }

@@ -33,6 +33,10 @@ Route::get('specializations', [SpecializationController::class, 'index']);
 // ================================================
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/doctors/{doctor}/available-slots', [DoctorController::class, 'availableSlots']);
+    Route::get('/doctor/appointments', [AppointmentController::class, 'doctorAppointments']);
+    Route::get('/doctor/patients', [DoctorController::class, 'patients'])->middleware('auth:sanctum');
+    Route::get('/doctor/profile', [DoctorController::class, 'profile']);
+    Route::put('/doctor/profile', [DoctorController::class, 'updateProfile']);
 
     // User
     Route::get('/user', function (Request $request) {

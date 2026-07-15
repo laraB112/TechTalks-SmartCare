@@ -9,9 +9,11 @@ use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class AppointmentStatusController extends Controller
 {
+    use AuthorizesRequests;
     public function accept(Request $request, Appointment $appointment): JsonResponse
     {
         $this->authorize('accept', $appointment);

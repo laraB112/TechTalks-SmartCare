@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Doctor;
+
 
 class AppointmentController extends Controller
 {
@@ -46,4 +49,24 @@ class AppointmentController extends Controller
 
         return response()->json($appointments);
     }
+
+    // ✅ View doctor's appointments
+    public function doctorAppointments(Request $request)
+{
+    $doctor = Doctor::where('user_id', Auth::id())->firstOrFail();
+
+    $query = Appointment::where('doctor_id', $doctor->id)
+        ->with(['patient']);
+
+    // ✅ If date is provided, filter by date
+    if ($request->has('date')) {
+        $query->where('date', $request->date);
+    }
+    // ✅ If no date provided, return ALL appointments
+    // (no additional filter)
+
+    $appointments = $query->orderBy('time', 'asc')->get();
+
+    return AppointmentResource::collection($appointments);
+}
 }
