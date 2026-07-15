@@ -6,15 +6,14 @@ import {
   Calendar,
   Clock,
   User,
-  Stethoscope,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Clock as ClockIcon,
   Loader2,
   CalendarPlus,
   ChevronRight,
   Circle,
+  CheckCircle,
+  XCircle,
+  Clock as ClockIcon,
+  AlertCircle,
 } from "lucide-react";
 
 interface Appointment {
@@ -22,6 +21,7 @@ interface Appointment {
   date: string;
   time: string;
   status: string;
+  queue_position?: number;
   doctor: {
     id: number;
     user: {
@@ -119,6 +119,20 @@ export default function AppointmentsPage() {
     };
   };
 
+  
+  const getNextAppointment = () => {
+    const today = new Date().toISOString().split("T")[0];
+    const upcoming = appointments
+      .filter((a) => a.date >= today && a.status !== "completed" && a.status !== "cancelled" && a.status !== "rejected")
+      .sort((a, b) => {
+        if (a.date !== b.date) return a.date.localeCompare(b.date);
+        return (a.time || "").localeCompare(b.time || "");
+      });
+    return upcoming[0] || null;
+  };
+
+  const nextAppointment = getNextAppointment();
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -141,7 +155,7 @@ export default function AppointmentsPage() {
 
   return (
     <div className="p-4 sm:p-6 max-w-6xl mx-auto">
-      {/* Header */}
+      
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 sm:p-3 bg-blue-100 rounded-xl">
@@ -157,6 +171,46 @@ export default function AppointmentsPage() {
           Book New
         </button>
       </div>
+
+      {nextAppointment && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4 sm:p-6 mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <div className="p-3 bg-blue-100 rounded-xl">
+                <Calendar className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-blue-600">UPCOMING APPOINTMENT</p>
+                <h3 className="text-lg font-bold text-gray-900">
+                  {nextAppointment.doctor?.user?.name || "Unknown"}
+                </h3>
+                <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-gray-600">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="w-4 h-4" />
+                    {nextAppointment.date?.split("T")[0] || "N/A"}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    {nextAppointment.time || "N/A"}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-start sm:items-end gap-1">
+              {nextAppointment.queue_position && (
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-100 rounded-full">
+                  <span className="text-sm font-medium text-blue-700">
+                    Queue Position: #{nextAppointment.queue_position}
+                  </span>
+                </div>
+              )}
+              <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusConfig(nextAppointment.status).color}`}>
+                {getStatusConfig(nextAppointment.status).label}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Empty State */}
       {appointments.length === 0 ? (
@@ -225,7 +279,7 @@ export default function AppointmentsPage() {
                             <User className="w-4 h-4 text-blue-600" />
                           </div>
                           <span className="text-sm font-medium text-gray-900">
-                           {appointment.doctor?.user?.name || "N/A"}
+                            {appointment.doctor?.user?.name || "N/A"}
                           </span>
                         </div>
                       </td>
