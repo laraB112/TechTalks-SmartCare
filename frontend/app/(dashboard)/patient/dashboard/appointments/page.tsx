@@ -119,7 +119,7 @@ export default function AppointmentsPage() {
     };
   };
 
-  
+
   const getNextAppointment = () => {
     const today = new Date().toISOString().split("T")[0];
     const upcoming = appointments
@@ -155,7 +155,7 @@ export default function AppointmentsPage() {
 
   return (
     <div className="p-4 sm:p-6 max-w-6xl mx-auto">
-      
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="p-2 sm:p-3 bg-blue-100 rounded-xl">
@@ -235,9 +235,9 @@ export default function AppointmentsPage() {
           </button>
         </div>
       ) : (
-        /* Table View */
+        
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-          {/* Desktop Table */}
+       
           <div className="hidden sm:block overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -317,7 +317,7 @@ export default function AppointmentsPage() {
                           <User className="w-4 h-4 text-blue-600" />
                         </div>
                         <span className="text-sm font-medium text-gray-900">
-                          Dr. {appointment.doctor?.user?.name || "N/A"}
+                          {appointment.doctor?.user?.name || "N/A"}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">

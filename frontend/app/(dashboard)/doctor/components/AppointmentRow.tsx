@@ -37,17 +37,15 @@ export default function AppointmentRow({ appointment, onStatusUpdate }: Props) {
         }
       );
 
-      // ✅ Log the full response
+     
       const data = await response.json();
-      console.log("📡 Response status:", response.status);
-      console.log("📄 Response data:", data);
+
 
       if (response.ok) {
         if (onStatusUpdate) {
           onStatusUpdate();
         }
       } else {
-        console.error("❌ Failed to update status:", data.message || data);
         alert(data.message || "Failed to update status");
       }
     } catch (error) {
@@ -59,7 +57,7 @@ export default function AppointmentRow({ appointment, onStatusUpdate }: Props) {
 
   const status = appointment.status?.toLowerCase() || '';
 
-  // ✅ Determine which buttons to show
+
   const canAccept = status === 'pending';
   const canReject = status === 'pending' || status === 'waiting';
   const canStart = status === 'waiting' || status === 'accepted';
@@ -68,7 +66,6 @@ export default function AppointmentRow({ appointment, onStatusUpdate }: Props) {
   const isRejected = status === 'rejected';
   const isCancelled = status === 'cancelled';
 
-  // ✅ Hide actions if completed, rejected, or cancelled
   const showActions = !isCompleted && !isRejected && !isCancelled;
 
   return (
@@ -94,7 +91,6 @@ export default function AppointmentRow({ appointment, onStatusUpdate }: Props) {
             {appointment.status}
           </span>
 
-          {/* ✅ Action Buttons */}
           {showActions && !loading && (
             <>
               {canAccept && (

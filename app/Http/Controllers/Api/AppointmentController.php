@@ -58,12 +58,10 @@ class AppointmentController extends Controller
     $query = Appointment::where('doctor_id', $doctor->id)
         ->with(['patient']);
 
-    // ✅ If date is provided, filter by date
     if ($request->has('date')) {
         $query->where('date', $request->date);
     }
-    // ✅ If no date provided, return ALL appointments
-    // (no additional filter)
+   
 
     $appointments = $query->orderBy('time', 'asc')->get();
 

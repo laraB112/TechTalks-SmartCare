@@ -181,7 +181,6 @@ class DoctorController extends Controller
         ]);
     }
 
-    // ✅ Get patients for the logged-in doctor
     public function patients(Request $request)
     {
         try {
@@ -194,10 +193,9 @@ class DoctorController extends Controller
             $patients = $appointments->groupBy('patient_id')->map(function ($appointments) {
                 $patient = $appointments->first()->patient;
 
-                // ✅ Convert status to string before checking
+                
                 $completedAppointments = $appointments->filter(function ($apt) {
-                    $status = $apt->status; // This is an Enum object
-                    // ✅ Check if status is 'completed' (Enum comparison)
+                    $status = $apt->status; 
                     return $status->value === 'completed' || $status->value === 'Completed';
                 });
 

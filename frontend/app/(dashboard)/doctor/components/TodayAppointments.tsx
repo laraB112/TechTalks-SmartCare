@@ -75,8 +75,7 @@ export default function TodayAppointments({ onRefresh, onAppointmentsChange }: T
       }));
 
       setAppointments(mappedAppointments);
-      
-      // ✅ Notify parent about appointments
+     
       if (onAppointmentsChange) {
         onAppointmentsChange(mappedAppointments);
       }
