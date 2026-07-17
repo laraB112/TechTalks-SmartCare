@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // ================================================
     Route::post('/appointments', [AppointmentController::class, 'store']);
     Route::get('/appointments', [AppointmentController::class, 'index']);
+    Route::patch('/appointments/{appointment}/reschedule', [AppointmentController::class, 'reschedule'])->middleware('auth:sanctum');
 
     // ================================================
     // Doctor Routes

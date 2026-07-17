@@ -277,7 +277,7 @@ export default function DoctorProfilePage() {
                 <HeartPulse className="w-10 h-10 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Dr. {profile.name}</h2>
+                <h2 className="text-xl font-bold text-gray-900">{profile.name}</h2>
                 <p className="text-blue-600 font-medium">{profile.specialization}</p>
               </div>
             </div>

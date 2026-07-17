@@ -137,6 +137,64 @@ class AdminController extends Controller
             'data' => $doctor
         ]);
     }
+    // Reschedule an appointment
+    public function reschedule(Request $request, $id)
+    {
+        try {
+            $appointment = Appointment::where('patient_id', Auth::id())
+                ->findOrFail($id);
+
+            // Check if appointment can be rescheduled
+            $allowedStatuses = ['pending', 'accepted', 'waiting'];
+            if (!in_array(strtolower($appointment->status), $allowedStatuses)) {
+                return response()->json([
+                    'message' => 'This appointment cannot be rescheduled because it is already ' . $appointment->status
+                ], 400);
+            }
+
+            // Check if appointment is in the future
+            if ($appointment->date < now()->toDateString()) {
+                return response()->json([
+                    'message' => 'Cannot reschedule past appointments'
+                ], 400);
+            }
+
+            $validated = $request->validate([
+                'date' => 'required|date|after_or_equal:today',
+                'time' => 'required',
+            ]);
+
+            // Check if the new slot is available
+            $existingAppointment = Appointment::where('doctor_id', $appointment->doctor_id)
+                ->where('date', $validated['date'])
+                ->where('time', $validated['time'])
+                ->where('id', '!=', $id)
+                ->whereIn('status', ['pending', 'accepted', 'in_progress'])
+                ->first();
+
+            if ($existingAppointment) {
+                return response()->json([
+                    'message' => 'This time slot is already booked. Please choose another time.',
+                ], 409);
+            }
+
+            // Update the appointment
+            $appointment->date = $validated['date'];
+            $appointment->time = $validated['time'];
+            $appointment->status = 'pending'; // Reset to pending after reschedule
+            $appointment->save();
+
+            return response()->json([
+                'message' => 'Appointment rescheduled successfully',
+                'appointment' => $appointment
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error rescheduling appointment',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
     public function deleteDoctor($id)
     {
@@ -181,7 +239,7 @@ class AdminController extends Controller
                         ->where('status', 'completed')
                         ->latest('date')
                         ->first()
-                        ?->date,
+                            ?->date,
                 ];
             })
         ]);
@@ -210,7 +268,7 @@ class AdminController extends Controller
                     ->where('status', 'completed')
                     ->latest('date')
                     ->first()
-                    ?->date,
+                        ?->date,
                 'created_at' => $patient->created_at,
             ]
         ]);
