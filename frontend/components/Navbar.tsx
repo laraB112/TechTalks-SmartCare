@@ -93,15 +93,6 @@ export default function Navbar() {
                             >
                                 Home
                             </Link>
-
-                            <Link
-                                href="/patient/dashboard"
-                                className={pathname === "/patient/dashboard" ? mobileActiveNavLink : mobileNavLink}
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                Dashboard
-                            </Link>
-
                             <Link
                                 href="/about"
                                 className={pathname === "/about" ? mobileActiveNavLink : mobileNavLink}
@@ -109,21 +100,6 @@ export default function Navbar() {
                             >
                                 About Us
                             </Link>
-                            <Link
-                                href="/services"
-                                className={pathname === "/services" ? mobileActiveNavLink : mobileNavLink}
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                Our Services
-                            </Link>
-                            <Link
-                                href="/doctors"
-                                className={pathname === "/doctors" ? mobileActiveNavLink : mobileNavLink}
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                Doctors
-                            </Link>
-
                             <hr></hr>
                             <Link
                                 href="/login"

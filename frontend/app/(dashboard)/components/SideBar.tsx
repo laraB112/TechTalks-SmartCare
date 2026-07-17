@@ -18,56 +18,67 @@ import {
 import { useState } from "react";
 
 type SidebarProps = {
-  role: "patient" | "doctor";
+  role: "patient" | "doctor" | "admin";
 };
 
 export default function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
- const patientLinks = [
-  {
-    title: "Dashboard",
-    href: "/patient/dashboard",
-    icon: Home,
-  },
-  {
-    title: "My Appointments",     
-    href: "/patient/dashboard/appointments",
-    icon: Calendar,
-  },
-  {
-    title: "Profile",             
-    href: "/patient/dashboard/profile",
-    icon: User,
-  },
-  {
-    title: "Emergency Contact",
-    href: "/patient/dashboard/emergency-contact",
-    icon: PhoneCall,
-  },
-];
+  const patientLinks = [
+    {
+      title: "Dashboard",
+      href: "/patient/dashboard",
+      icon: Home,
+    },
+    {
+      title: "My Appointments",
+      href: "/patient/dashboard/appointments",
+      icon: Calendar,
+    },
+    {
+      title: "Profile",
+      href: "/patient/dashboard/profile",
+      icon: User,
+    },
+    {
+      title: "Emergency Contact",
+      href: "/patient/dashboard/emergency-contact",
+      icon: PhoneCall,
+    },
+  ];
 
   const doctorLinks = [
-  {
-    title: "Dashboard",
-    href: "/doctor/dashboard",
-    icon: Home,
-  },
-  {
-    title: "Patients",
-    href: "/doctor/dashboard/patients",
-    icon: Users,
-  },
-  {
-    title: "Profile",
-    href: "/doctor/dashboard/profile",
-    icon: User,
-  },
- 
-];
+    {
+      title: "Dashboard",
+      href: "/doctor/dashboard",
+      icon: Home,
+    },
+    {
+      title: "Patients",
+      href: "/doctor/dashboard/patients",
+      icon: Users,
+    },
+    {
+      title: "Profile",
+      href: "/doctor/dashboard/profile",
+      icon: User,
+    },
+  ];
+  const adminLinks = [
+    {
+      title: "Doctors Users",
+      href: "/admin/dashboard/doctor",
+      icon: Users,
+    },
+     {
+      title: "Patients Users",
+      href: "/admin/dashboard/patient",
+      icon: Users,
+    },
+  ];
 
-  const links = role === "patient" ? patientLinks : doctorLinks;
+  const links = role === "patient" ? patientLinks : role === "doctor" ? doctorLinks : adminLinks;
   const router = useRouter();
 
 
@@ -99,7 +110,9 @@ export default function Sidebar({ role }: SidebarProps) {
             <p className="text-sm text-gray-500">
               {role === "patient"
                 ? "Patient Portal"
-                : "Doctor Portal"}
+                : role === "doctor"
+                  ? "Doctor Portal"
+                  : "Admin Portal"}
             </p>
           </div>
         </div>
@@ -128,10 +141,10 @@ export default function Sidebar({ role }: SidebarProps) {
             );
           })}
         </nav>
-        
+
 
       </aside>
     </>
   );
-  
+
 }

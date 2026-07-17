@@ -5,7 +5,7 @@ import TopNavBar from "./TopNavBar";
 
 type DashboardLayoutProps = {
   children: ReactNode;
-  role: "patient" | "doctor";
+  role: "patient" | "doctor" | "admin";
 };
 
 export default function DashboardLayout({
