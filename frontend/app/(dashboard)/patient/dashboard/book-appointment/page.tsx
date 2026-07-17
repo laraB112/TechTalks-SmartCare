@@ -102,12 +102,12 @@ export default function BookAppointmentPage() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("❌ Error response:", errorText);
+        console.error(" Error response:", errorText);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("✅ Available slots data:", data);
+     
 
       const allSlots = data.all_slots || [];
       const availableSlots = data.available_slots || [];
@@ -121,7 +121,7 @@ export default function BookAppointmentPage() {
       setSelectedTime(null);
       setError("");
     } catch (err: any) {
-      console.error("❌ Error fetching slots:", err);
+      console.error(" Error fetching slots:", err);
       setError(err.message || "Could not load available time slots.");
     } finally {
       setFetchingSlots(false);
@@ -144,7 +144,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         const userData = localStorage.getItem("user");
         const user = userData ? JSON.parse(userData) : null;
 
-        // ✅ Use the EXACT URL that works in Postman
+       
         const url = "http://TechTalks-SmartCare.test/api/appointments";
         console.log("📤 Booking URL:", url);
         console.log("📤 Booking data:", {
@@ -171,17 +171,16 @@ const handleSubmit = async (e: React.FormEvent) => {
             }),
         });
 
-        console.log("📡 Response status:", response.status);
+        console.log("Response status:", response.status);
 
-        // ✅ Get response as text first to debug
         const responseText = await response.text();
-        console.log("📄 Raw response:", responseText);
+        console.log(" Raw response:", responseText);
 
         let data;
         try {
             data = JSON.parse(responseText);
         } catch (parseError) {
-            console.error("❌ Failed to parse JSON:", parseError);
+            console.error("Failed to parse JSON:", parseError);
             throw new Error("Server returned invalid response. Please check if backend is running.");
         }
 

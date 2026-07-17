@@ -67,16 +67,31 @@ export default function Sidebar({ role }: SidebarProps) {
   ];
   const adminLinks = [
     {
-      title: "Doctors Users",
-      href: "/admin/dashboard/doctor",
-      icon: Users,
+        title: "Dashboard",
+        href: "/admin/dashboard",
+        icon: Home,
     },
-     {
-      title: "Patients Users",
-      href: "/admin/dashboard/patient",
-      icon: Users,
+    {
+        title: "Doctors",
+        href: "/admin/dashboard/doctors",
+        icon: Users,
     },
-  ];
+    {
+        title: "Patients",
+        href: "/admin/dashboard/patients",
+        icon: User,
+    },
+    {
+        title: "Appointments",
+        href: "/admin/dashboard/appointments",
+        icon: Calendar,
+    },
+    {
+     title: "Profile",
+        href: "/admin/dashboard/profile",
+        icon: User,
+    },
+];
 
   const links = role === "patient" ? patientLinks : role === "doctor" ? doctorLinks : adminLinks;
   const router = useRouter();

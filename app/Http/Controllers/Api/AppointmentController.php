@@ -50,7 +50,7 @@ class AppointmentController extends Controller
         return response()->json($appointments);
     }
 
-    // ✅ View doctor's appointments
+    // View doctor's appointments
     public function doctorAppointments(Request $request)
 {
     $doctor = Doctor::where('user_id', Auth::id())->firstOrFail();

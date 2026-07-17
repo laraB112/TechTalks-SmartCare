@@ -73,22 +73,14 @@ export default function DoctorDashboardPage() {
         }
       });
 
-      console.log("📊 Stats:", {
-        todayCount,
-        totalCount: appointments.length,
-        pendingCount,
-        completedCount,
-      });
-
       setStats({
         todayCount,          // Today only
         totalCount: appointments.length,  // All
         pendingCount,        // All pending
         completedCount,      // All completed
       });
-    } catch (error) {
-      console.error("❌ Error fetching stats:", error);
-    } finally {
+    }
+    finally {
       setLoading(false);
     }
   };
@@ -104,7 +96,6 @@ export default function DoctorDashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <span className="animate-spin text-2xl">⏳</span>
         <span className="ml-3 text-gray-500">Loading dashboard...</span>
       </div>
     );

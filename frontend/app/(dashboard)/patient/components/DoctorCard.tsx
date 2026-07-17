@@ -12,7 +12,7 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
   const router = useRouter();
 
   const handleBookAppointment = () => {
-    // ✅ Navigate to booking page with doctor ID
+   
     router.push(`/patient/dashboard/book-appointment?doctorId=${doctor.id}`);
   };
 

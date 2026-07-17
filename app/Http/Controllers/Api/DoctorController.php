@@ -29,6 +29,7 @@ class DoctorController extends Controller
             'max_fee' => ['nullable', 'numeric', 'min:0'],
             'is_available' => ['nullable', 'boolean'],
             'sort_by' => ['nullable', 'in:experience_years,consultation_fee'],
+            'age' => 'sometimes|integer|min:1|max:150',
             'sort_dir' => ['nullable', 'in:asc,desc'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ]);
@@ -277,6 +278,7 @@ class DoctorController extends Controller
                 'consultation_fee' => 'sometimes|numeric|min:0',
                 'experience_years' => 'sometimes|integer|min:0',
                 'is_available' => 'sometimes|boolean',
+                
             ]);
 
             // Update user (name, phone)
@@ -284,6 +286,7 @@ class DoctorController extends Controller
                 $doctor->user->update([
                     'name' => $validated['name'] ?? $doctor->user->name,
                     'phone' => $validated['phone'] ?? $doctor->user->phone,
+                     'age' => $validated['age'] ?? $doctor->user->age, 
                 ]);
             }
 
@@ -295,6 +298,7 @@ class DoctorController extends Controller
                 'consultation_fee' => $validated['consultation_fee'] ?? $doctor->consultation_fee,
                 'experience_years' => $validated['experience_years'] ?? $doctor->experience_years,
                 'is_available' => $validated['is_available'] ?? $doctor->is_available,
+               
             ]);
 
             return $this->profile($request);

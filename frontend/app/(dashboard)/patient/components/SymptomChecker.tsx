@@ -58,7 +58,7 @@ export default function SymptomChecker() {
     }
   };
 
-  // ✅ Get matching specialty from symptoms using the specialties.ts mapping
+  // Get matching specialty from symptoms using the specialties.ts mapping
   const getMatchingSpecialty = (text: string): Specialty | null => {
     const lowerText = text.toLowerCase();
     
@@ -86,11 +86,11 @@ export default function SymptomChecker() {
     setHasSearched(true);
 
     try {
-      // ✅ Find matching specialty from symptoms
+      //  Find matching specialty from symptoms
       const matchedSpecialty = getMatchingSpecialty(symptoms);
       
       if (matchedSpecialty) {
-        // ✅ Filter doctors by the matched specialty
+        //  Filter doctors by the matched specialty
         const filtered = allDoctors.filter(
           (doctor) => doctor.specialty.toLowerCase() === matchedSpecialty.name.toLowerCase()
         );
@@ -99,7 +99,7 @@ export default function SymptomChecker() {
         setSuggestedSpecialty(matchedSpecialty.name);
         setError("");
       } else {
-        // ✅ No specialty matched - show all doctors with a message
+        //  No specialty matched - show all doctors with a message
         setDoctors(allDoctors);
         setSuggestedSpecialty(null);
         setError("No specific specialty matched. Showing all available doctors.");

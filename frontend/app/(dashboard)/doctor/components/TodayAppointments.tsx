@@ -19,7 +19,7 @@ export interface Appointment {
 
 interface TodayAppointmentsProps {
   onRefresh?: () => void;
-  onAppointmentsChange?: (appointments: Appointment[]) => void; // ✅ Add this
+  onAppointmentsChange?: (appointments: Appointment[]) => void;
 }
 
 export default function TodayAppointments({ onRefresh, onAppointmentsChange }: TodayAppointmentsProps) {
@@ -75,12 +75,11 @@ export default function TodayAppointments({ onRefresh, onAppointmentsChange }: T
       }));
 
       setAppointments(mappedAppointments);
-     
+
       if (onAppointmentsChange) {
         onAppointmentsChange(mappedAppointments);
       }
     } catch (error) {
-      console.error("❌ Error fetching appointments:", error);
       setError("Failed to load appointments. Please try again.");
       setAppointments([]);
       if (onAppointmentsChange) {
@@ -155,9 +154,9 @@ export default function TodayAppointments({ onRefresh, onAppointmentsChange }: T
         <div className="p-4 text-center text-red-500">{error}</div>
       )}
 
-      <AppointmentTable 
-        appointments={appointments} 
-        loading={loading} 
+      <AppointmentTable
+        appointments={appointments}
+        loading={loading}
         onStatusUpdate={handleRefresh}
       />
     </section>

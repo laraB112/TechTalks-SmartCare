@@ -8,8 +8,6 @@ import {
   Phone,
   Calendar,
   MapPin,
-  Briefcase,
-  Stethoscope,
   Edit,
   Save,
   X,
@@ -17,9 +15,11 @@ import {
   CheckCircle,
   AlertCircle,
   UserCircle,
-  Clock,
-  DollarSign,
   HeartPulse,
+  Briefcase,
+  DollarSign,
+  Stethoscope,
+  Clock,
 } from "lucide-react";
 
 interface DoctorProfile {
@@ -57,6 +57,7 @@ export default function DoctorProfilePage() {
     consultation_fee: "",
     experience_years: "",
     is_available: true,
+    age: "", 
   });
 
   useEffect(() => {
@@ -97,7 +98,6 @@ export default function DoctorProfilePage() {
       const profileData = data.data || data;
       setProfile(profileData);
 
-      // Populate form data
       setFormData({
         name: profileData.name || "",
         phone: profileData.phone || "",
@@ -107,21 +107,31 @@ export default function DoctorProfilePage() {
         consultation_fee: profileData.consultation_fee?.toString() || "",
         experience_years: profileData.experience_years?.toString() || "",
         is_available: profileData.is_available ?? true,
+        age: profileData.age?.toString() || "",
       });
-    } catch (error) {
-      console.error("Error fetching profile:", error);
+
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching profile:", err);
       setError("Failed to load profile. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-    });
+    if (type === "checkbox") {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData({
+        ...formData,
+        [name]: checked,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -149,6 +159,7 @@ export default function DoctorProfilePage() {
           consultation_fee: parseFloat(formData.consultation_fee) || 0,
           experience_years: parseInt(formData.experience_years) || 0,
           is_available: formData.is_available,
+          age: formData.age ? parseInt(formData.age) : null, 
         }),
       });
 
@@ -159,7 +170,23 @@ export default function DoctorProfilePage() {
       }
 
       setSuccess("Profile updated successfully!");
-      setProfile(data.data || data);
+
+      // Update the profile with new data
+      if (profile) {
+        setProfile({
+          ...profile,
+          name: formData.name,
+          phone: formData.phone,
+          city: formData.city,
+          address: formData.address,
+          bio: formData.bio,
+          consultation_fee: parseFloat(formData.consultation_fee) || 0,
+          experience_years: parseInt(formData.experience_years) || 0,
+          is_available: formData.is_available,
+          age: formData.age ? parseInt(formData.age) : 0,
+        });
+      }
+
       setEditing(false);
 
       setTimeout(() => {
@@ -176,7 +203,7 @@ export default function DoctorProfilePage() {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-        <span className="ml-3 text-gray-600 text-sm sm:text-base">Loading profile...</span>
+        <span className="ml-3 text-gray-600">Loading profile...</span>
       </div>
     );
   }
@@ -184,9 +211,9 @@ export default function DoctorProfilePage() {
   if (error) {
     return (
       <div className="flex items-center justify-center h-64 px-4">
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 sm:p-6 flex items-center gap-3 max-w-md w-full">
-          <AlertCircle className="w-6 h-6 text-red-500 flex-shrink-0" />
-          <p className="text-red-700 text-sm sm:text-base">{error}</p>
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+          <AlertCircle className="w-6 h-6 text-red-500" />
+          <p className="text-red-700">{error}</p>
         </div>
       </div>
     );
@@ -209,8 +236,8 @@ export default function DoctorProfilePage() {
             <User className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">My Profile</h1>
-        
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Profile</h1>
+            <p className="text-sm text-gray-500">Manage your doctor profile</p>
           </div>
         </div>
         {!editing && (
@@ -250,13 +277,21 @@ export default function DoctorProfilePage() {
                 <HeartPulse className="w-10 h-10 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">{profile.name}</h2>
+                <h2 className="text-xl font-bold text-gray-900">Dr. {profile.name}</h2>
                 <p className="text-blue-600 font-medium">{profile.specialization}</p>
               </div>
             </div>
 
             {/* Details Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-start gap-3">
+                <User className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm text-gray-500">Full Name</p>
+                  <p className="text-gray-900 font-medium">{profile.name}</p>
+                </div>
+              </div>
+
               <div className="flex items-start gap-3">
                 <Mail className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div>
@@ -352,7 +387,6 @@ export default function DoctorProfilePage() {
                   value={formData.name}
                   onChange={handleChange}
                   className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                  required
                 />
               </div>
 
@@ -396,8 +430,8 @@ export default function DoctorProfilePage() {
                   name="experience_years"
                   value={formData.experience_years}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   min="0"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
               </div>
 
@@ -408,9 +442,23 @@ export default function DoctorProfilePage() {
                   name="consultation_fee"
                   value={formData.consultation_fee}
                   onChange={handleChange}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                   min="0"
                   step="0.01"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                />
+              </div>
+
+      
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                <input
+                  type="number"
+                  name="age"
+                  value={formData.age}
+                  onChange={handleChange}
+                  min="1"
+                  max="150"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
               </div>
 
@@ -464,7 +512,6 @@ export default function DoctorProfilePage() {
                   setEditing(false);
                   setError("");
                   setSuccess("");
-                  // Reset form data
                   if (profile) {
                     setFormData({
                       name: profile.name || "",
@@ -475,6 +522,7 @@ export default function DoctorProfilePage() {
                       consultation_fee: profile.consultation_fee?.toString() || "",
                       experience_years: profile.experience_years?.toString() || "",
                       is_available: profile.is_available ?? true,
+                      age: profile.age?.toString() || "",
                     });
                   }
                 }}
