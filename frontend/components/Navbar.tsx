@@ -51,6 +51,12 @@ export default function Navbar() {
                         >
                             About Us
                         </Link>
+                        <Link
+                            href="/faq"
+                            className={pathname === "/faq" ? activeNavLink : navLink}
+                        >
+                            FAQ
+                        </Link>
 
 
                     </div>
@@ -99,6 +105,13 @@ export default function Navbar() {
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 About Us
+                            </Link>
+                            <Link
+                                href="/faq"
+                                className={pathname === "/faq" ? mobileActiveNavLink : mobileNavLink}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                FAQ
                             </Link>
                             <hr></hr>
                             <Link
