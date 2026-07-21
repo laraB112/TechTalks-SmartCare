@@ -11,7 +11,7 @@ export default function Footer() {
                     {/*logo*/}
                     <div>
                         <div className="flex items-center justify-center sm:justify-start gap-2 mb-4">
-                            
+
                             <h3 className="text-white text-lg font-semibold">
                                 <span className="text-blue-600">
                                     Doctor
@@ -80,19 +80,35 @@ export default function Footer() {
                         <div className="space-y-5">
                             <div className="flex items-start justify-center sm:justify-start gap-3">
                                 <MapPin className="text-blue-500 mt-1" size={18} />
-                                <span className="break-words">Beirut, Lebanon</span>
+                                <a
+                                    href="https://www.google.com/maps?q=Beirut,Lebanon"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-white hover:text-blue-300 transition-colors"
+                                >
+                                    Beirut, Lebanon
+                                </a>
                             </div>
 
                             <div className="flex items-start justify-center sm:justify-start gap-3">
                                 <Phone className="text-blue-500 mt-1" size={18} />
-                                <span className="break-words">+961 XX XXX XXX</span>
+                                <a
+                                    href="tel:+96170123456"
+                                    className="text-white hover:text-blue-300 transition-colors"
+                                >
+                                    +961 70 123 456
+                                </a>
                             </div>
-
-                            <div className="flex items-start justify-center sm:justify-start  gap-3">
+                            <div className="flex items-start justify-center sm:justify-start gap-3">
                                 <Mail className="text-blue-500 mt-1" size={18} />
-                                <span className="break-words">support@doctorappointment.com</span>
+                                <a
+                                    href="mailto:support@bookappointment.com"
+                                    className="text-white hover:text-blue-300 transition-colors"
+                                >
+                                    support@bookappointment.com
+                                </a>
                             </div>
-
+                        
                         </div>
                     </div>
 

@@ -1,15 +1,14 @@
 "use client";
 
 
-import { ChevronDown } from "lucide-react";
+import { ChevronDown,HelpCircle } from "lucide-react";
 import { useState } from "react";
 
 
 const faqs = [
     {
         question: "How do I book an appointment?",
-        answer:
-            "Create an account, sign in, choose your preferred doctor, select an available date and time, then confirm your appointment.",
+        answer: "Log in to your account → Go to Dashboard → Click 'Book Appointment' → Browse doctors → Select a doctor and choose an available date/time → Confirm your booking.",
     },
     {
         question: "Can I cancel or reschedule my appointment?",
@@ -36,6 +35,23 @@ const faqs = [
         answer:
             "Yes. Browse our doctors, view their specialties and availability, and select the one that best suits your healthcare needs.",
     },
+    {
+        question: "How do I see my appointment history?",
+        answer: "Go to 'My Appointments' page. You'll see all your past and upcoming appointments with their current status (Pending, Accepted, Completed, etc.).",
+    },
+    {
+
+        question: "How do I know if a doctor is available?",
+        answer: "When booking, you'll see available time slots for each doctor. Booked slots are shown as unavailable.",
+    },
+    {
+        question: "What happens if I miss my appointment?",
+        answer: "Please cancel at least 2 hours before your appointment. Missed appointments may incur a cancellation fee.",
+    },
+    {
+        question: "How do I cancel my appointment?",
+        answer: "Go to 'My Appointments' → Find the appointment → Click 'Cancel' → Provide a reason (optional) → Confirm cancellation.",
+    }
 ];
 
 export default function Faq() {
@@ -52,14 +68,16 @@ export default function Faq() {
             <div className="container mx-auto px-6 lg:px-8 max-w-4xl">
                 {/* Heading */}
                 <div className="text-center mb-12">
+                    <div className="flex items-center justify-center gap-2 mb-3">
+                        <HelpCircle className="w-10 h-10 text-blue-600" />
+                    </div>
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
                         Frequently Asked Questions
                     </h2>
 
                     <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-                        Find answers to the most common questions about booking
-                        appointments, managing your account, and using our healthcare
-                        services.
+                        Getting started with SmartCare is simple.
+                        Find the answers you need to make the most of your healthcare journey.
                     </p>
                 </div>
 
@@ -86,16 +104,25 @@ export default function Faq() {
 
                             <div
                                 className={`overflow-hidden transition-all duration-300 ${openIndex === index
-                                        ? "max-h-40 opacity-100"
-                                        : "max-h-0 opacity-0"
+                                    ? "max-h-40 opacity-100"
+                                    : "max-h-0 opacity-0"
                                     }`}
                             >
                                 <p className="px-5 pb-5 text-gray-600 leading-7">
                                     {faq.answer}
                                 </p>
                             </div>
+
                         </div>
                     ))}
+                </div>
+                <div className="mt-10 bg-blue-50 border border-blue-200 rounded-xl p-6 text-center">
+                    <p className="text-gray-700 text-sm sm:text-base">
+                        Still have questions?{" "}
+                        <a href="mailto:support@bookappointment.com" className="text-blue-600 font-medium hover:underline">
+                            Contact Support
+                        </a>
+                    </p>
                 </div>
             </div>
         </section>

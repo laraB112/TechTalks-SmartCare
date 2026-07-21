@@ -73,7 +73,7 @@ export default function AdminAppointmentsPage() {
         }
     };
 
-    /
+    
     const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const date = e.target.value;
         setSelectedDate(date);

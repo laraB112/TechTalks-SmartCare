@@ -76,6 +76,7 @@ export default function DoctorFormPage() {
             setDoctor({
                 ...doctorData,
                 specialty: doctorData.specialty || doctorData.specialization?.name || "",
+                age: doctorData.age || 0,
             });
             setLoading(false);
         } catch (err) {
@@ -93,7 +94,7 @@ export default function DoctorFormPage() {
         } else {
             setDoctor((prev) => ({
                 ...prev,
-                [name]: name === "experience" ? Number(value) : value,
+                [name]: name === "experience" || name === "age" ? Number(value) : value,
             }));
         }
     };
