@@ -76,8 +76,7 @@ export default function Faq() {
                     </h2>
 
                     <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
-                        Getting started with SmartCare is simple.
-                        Find the answers you need to make the most of your healthcare journey.
+                        You've got questions. We've got answers.
                     </p>
                 </div>
 
