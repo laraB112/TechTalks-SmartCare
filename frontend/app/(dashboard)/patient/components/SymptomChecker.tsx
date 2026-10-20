@@ -143,35 +143,26 @@ export default function SymptomChecker() {
     hasSearched && symptoms.trim() !== "" && !suggestedSpecialty;
 
   return (
-    <main className="min-w-0 space-y-6 sm:space-y-8">
+    <main className="min-w-0 space-y-6 sm:space-y-7">
       {/* Intro */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#075C70] via-[#086B7E] to-[#0E7490] p-5 text-white shadow-lg shadow-[#075C70]/10 sm:p-7 lg:p-8">
-        <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full border-[22px] border-white/[0.06] sm:h-56 sm:w-56" />
+      <section className="rounded-2xl bg-[#075C70] p-5 text-white sm:p-6 lg:p-7">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-cyan-100">
+            Personalized guidance
+          </p>
 
-        <div className="relative flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/10 sm:h-14 sm:w-14">
-            <HeartPulse size={27} />
-          </div>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+            Find the Right Doctor
+          </h1>
 
-          <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-cyan-100">
-              Personalized guidance
-            </p>
-
-            <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
-              Find the Right Doctor
-            </h1>
-
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-cyan-50 sm:text-base">
-              Describe what you're experiencing and explore doctors whose
-              specialty may be relevant to your symptoms.
-            </p>
-          </div>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-cyan-50 sm:text-base">
+            Describe what you're experiencing and explore doctors whose specialty
+            may be relevant to your symptoms.
+          </p>
         </div>
       </section>
-
       {/* Symptom form */}
-      <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-6 lg:p-7">
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7 lg:p-8">
         <div className="mb-5">
           <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
             Describe Your Symptoms
@@ -308,8 +299,8 @@ export default function SymptomChecker() {
       <section className="space-y-4">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
-              {suggestedSpecialty ? "Recommended Doctors" : "Available Doctors"}
+            <h2 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+              {suggestedSpecialty ? "Recommended Doctors" : "Explore Our Doctors"}
             </h2>
             <p className="mt-1 text-sm text-slate-500">
               {loading
