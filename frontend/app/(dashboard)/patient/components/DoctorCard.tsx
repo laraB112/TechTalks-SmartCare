@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarPlus, BriefcaseMedical, ArrowUpRight } from "lucide-react";
+import { CalendarPlus, Stethoscope, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Doctor } from "./doctor";
 
@@ -41,7 +41,7 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
       {/* Doctor details */}
       <div className="min-w-0 pt-1">
         <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#E4F6F8] to-[#C9EAF0] text-[#075C70] transition-transform duration-300 group-hover:rotate-[-5deg] group-hover:scale-110 sm:mb-3 sm:h-10 sm:w-10">
-          <BriefcaseMedical className="h-4 w-4 sm:h-5 sm:w-5" />
+          <Stethoscope className="h-4 w-4 sm:h-5 sm:w-5" />
         </div>
 
         <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#0E7490] sm:text-[10px] sm:tracking-[0.12em]">
@@ -63,9 +63,7 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
 
       {/* Experience */}
       <div className="mb-3 flex min-w-0 items-center gap-1.5 sm:mb-5 sm:gap-2.5">
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-slate-500 sm:h-9 sm:w-9">
-          <BriefcaseMedical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-        </div>
+     
 
         <div className="min-w-0">
           <p className="text-[9px] leading-tight text-slate-500 sm:text-xs">
