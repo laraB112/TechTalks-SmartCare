@@ -1,14 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DashboardStats from "../components/DashboardStats";
 import TodayAppointments from "../components/TodayAppointments";
-
-interface Appointment {
-  id: number;
-  status: string;
-  date: string;
-}
 
 export default function DoctorDashboardPage() {
   const [stats, setStats] = useState({
@@ -17,77 +11,89 @@ export default function DoctorDashboardPage() {
     pendingCount: 0,
     completedCount: 0,
   });
-  const [allAppointments, setAllAppointments] = useState<Appointment[]>([]);
+
   const [loading, setLoading] = useState(true);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       setLoading(true);
+
       const token = localStorage.getItem("token");
 
       if (!token) {
         console.error("No token found");
-        setLoading(false);
         return;
       }
 
-      const response = await fetch(`http://TechTalks-SmartCare.test/api/doctor/appointments`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      });
+      const response = await fetch(
+        "http://TechTalks-SmartCare.test/api/doctor/appointments",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         console.error("Failed to fetch appointments for stats");
-        setLoading(false);
         return;
       }
 
       const data = await response.json();
-      const appointments = data.data || data || [];
+      const appointments = Array.isArray(data.data)
+        ? data.data
+        : Array.isArray(data)
+          ? data
+          : [];
 
-      const today = new Date().toISOString().split("T")[0];
+      // Use the browser's local date instead of UTC.
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const day = String(now.getDate()).padStart(2, "0");
+      const today = `${year}-${month}-${day}`;
 
       let todayCount = 0;
       let pendingCount = 0;
       let completedCount = 0;
 
-      appointments.forEach((a: any) => {
-        const status = a.status?.toLowerCase() || '';
-        const aptDate = a.appointment_date || a.date || '';
+      appointments.forEach((appointment: any) => {
+        const status = appointment.status?.toLowerCase() || "";
+        const appointmentDate =
+          appointment.appointment_date || appointment.date || "";
 
-        //  Today's appointments only
-        if (aptDate.includes(today)) {
+        if (String(appointmentDate).slice(0, 10) === today) {
           todayCount++;
         }
 
-        //  All pending/accepted/waiting (any date)
-        if (status === 'pending' || status === 'accepted' || status === 'waiting') {
+        if (
+          ["pending", "accepted", "waiting"].includes(status)
+        ) {
           pendingCount++;
         }
 
-        //  All completed (any date)
-        if (status === 'completed') {
+        if (status === "completed") {
           completedCount++;
         }
       });
 
       setStats({
-        todayCount,          // Today only
-        totalCount: appointments.length,  // All
-        pendingCount,        // All pending
-        completedCount,      // All completed
+        todayCount,
+        totalCount: appointments.length,
+        pendingCount,
+        completedCount,
       });
-    }
-    finally {
+    } catch (error) {
+      console.error("Error fetching doctor dashboard stats:", error);
+    } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, [fetchStats]);
 
   const refreshData = () => {
     fetchStats();
@@ -95,8 +101,10 @@ export default function DoctorDashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <span className="ml-3 text-gray-500">Loading dashboard...</span>
+      <div className="flex h-64 items-center justify-center">
+        <span className="ml-3 text-gray-500">
+          Loading dashboard...
+        </span>
       </div>
     );
   }

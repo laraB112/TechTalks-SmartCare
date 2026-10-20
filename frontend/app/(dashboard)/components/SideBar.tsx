@@ -53,11 +53,7 @@ export default function Sidebar({ role }: SidebarProps) {
       href: "/doctor/dashboard/patients",
       icon: Users,
     },
-    {
-      title: "Profile",
-      href: "/doctor/dashboard/profile",
-      icon: User,
-    },
+    
   ];
 
   const adminLinks = [

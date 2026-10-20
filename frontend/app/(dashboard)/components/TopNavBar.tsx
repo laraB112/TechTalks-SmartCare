@@ -1,4 +1,3 @@
-
 "use client";
 
 import { getUser, User, logout } from "@/app/lib/auth";
@@ -8,7 +7,6 @@ import {
   LogOut,
   UserRound,
   Home,
-  HeartPulse,
   ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
@@ -28,6 +26,24 @@ export default function TopNavbar({
     setUser(getUser());
   }, []);
 
+  const role = user?.role?.toLowerCase() || "patient";
+
+  const roleLabels: Record<string, string> = {
+    patient: "Patient",
+    doctor: "Doctor",
+    admin: "Admin",
+  };
+
+  const roleLabel = roleLabels[role] || "Patient";
+  const portalLabel = `${roleLabel} portal`;
+
+  const profilePath =
+    role === "doctor"
+      ? "/doctor/dashboard/profile"
+      : role === "admin"
+        ? "/admin/dashboard/profile"
+        : "/patient/dashboard/profile";
+
   const hours = new Date().getHours();
 
   const greeting =
@@ -38,6 +54,7 @@ export default function TopNavbar({
         : "Good evening";
 
   const displayName = user?.name || patientName;
+
   const initials =
     displayName
       .trim()
@@ -58,7 +75,7 @@ export default function TopNavbar({
         <div className="min-w-0 py-3">
           <div className="mb-1 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#0E7490] sm:text-[11px]">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#0E7490]" />
-            Patient portal
+            {portalLabel}
           </div>
 
           <h1 className="truncate text-base font-bold tracking-tight text-slate-900 sm:text-xl lg:text-2xl">
@@ -70,7 +87,11 @@ export default function TopNavbar({
           </h1>
 
           <p className="mt-0.5 hidden text-xs text-slate-500 sm:block sm:text-sm">
-            Welcome back! Your health journey matters.
+            {role === "doctor"
+              ? "Welcome back! Manage your schedule and patients."
+              : role === "admin"
+                ? "Welcome back! Manage your SmartCare platform."
+                : "Welcome back! Your health journey matters."}
           </p>
         </div>
 
@@ -85,17 +106,18 @@ export default function TopNavbar({
             <Home className="h-[18px] w-[18px] transition-transform duration-200 group-hover:-translate-y-0.5" />
           </Link>
 
-          {/* Patient profile */}
+          {/* User profile */}
           <div className="relative">
             <button
               type="button"
               onClick={() => setShowProfile((current) => !current)}
               aria-expanded={showProfile}
-              aria-label="Toggle patient profile"
-              className={`group flex items-center gap-2 rounded-xl border px-2 py-1.5 transition-all duration-200 sm:gap-2.5 sm:px-3 ${showProfile
+              aria-label={`Toggle ${roleLabel.toLowerCase()} profile`}
+              className={`group flex items-center gap-2 rounded-xl border px-2 py-1.5 transition-all duration-200 sm:gap-2.5 sm:px-3 ${
+                showProfile
                   ? "border-[#B9DFE8] bg-[#EAF7FB]"
                   : "border-transparent hover:border-[#DCEEF3] hover:bg-[#F5FAFC]"
-                }`}
+              }`}
             >
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#075C70] to-[#0E7490] text-xs font-bold text-white shadow-sm transition-transform duration-200 group-hover:scale-105 sm:h-10 sm:w-10 sm:text-sm">
                 {initials}
@@ -105,12 +127,15 @@ export default function TopNavbar({
                 <p className="max-w-[130px] truncate text-sm font-semibold text-slate-800">
                   {displayName}
                 </p>
-                <p className="mt-0.5 text-[11px] text-slate-500">Patient</p>
+                <p className="mt-0.5 text-[11px] text-slate-500">
+                  {roleLabel}
+                </p>
               </div>
 
               <ChevronDown
-                className={`hidden h-4 w-4 text-slate-400 transition-transform duration-200 md:block ${showProfile ? "rotate-180" : ""
-                  }`}
+                className={`hidden h-4 w-4 text-slate-400 transition-transform duration-200 md:block ${
+                  showProfile ? "rotate-180" : ""
+                }`}
               />
             </button>
 
@@ -129,12 +154,13 @@ export default function TopNavbar({
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#075C70] to-[#0E7490] text-sm font-bold text-white">
                         {initials}
                       </div>
+
                       <div className="min-w-0">
                         <p className="truncate text-sm font-bold text-slate-800">
                           {displayName}
                         </p>
                         <p className="mt-1 text-xs text-[#0E7490]">
-                          SmartCare patient
+                          SmartCare {roleLabel.toLowerCase()}
                         </p>
                       </div>
                     </div>
@@ -142,14 +168,13 @@ export default function TopNavbar({
 
                   <div className="p-2">
                     <Link
-                      href="/patient/dashboard/profile"
+                      href={profilePath}
                       onClick={() => setShowProfile(false)}
                       className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-[#EAF7FB] hover:text-[#075C70]"
                     >
                       <UserRound className="h-4 w-4" />
                       Profile
                     </Link>
-
                   </div>
                 </div>
               </>
