@@ -77,11 +77,6 @@ export default function Sidebar({ role }: SidebarProps) {
       href: "/admin/dashboard/appointments",
       icon: Calendar,
     },
-    {
-      title: "Profile",
-      href: "/admin/dashboard/profile",
-      icon: User,
-    },
   ];
 
   const links =
