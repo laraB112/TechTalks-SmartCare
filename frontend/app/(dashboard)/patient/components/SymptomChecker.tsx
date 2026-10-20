@@ -1,43 +1,57 @@
+
 "use client";
 
-import { useState, useEffect } from "react";
-import { Search, Loader2 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import {
+  Search,
+  Loader2,
+  HeartPulse,
+  RotateCcw,
+  Info,
+} from "lucide-react";
+
 import DoctorList from "./DoctorList";
+import EmptyState from "./EmptyState";
+import SuggestedSpecialty from "./SuggestedSpecialty";
 import { Doctor } from "./doctor";
-import { specialties, Specialty } from "./specialties"; 
+import { specialties, Specialty } from "./specialties";
 
 export default function SymptomChecker() {
   const [symptoms, setSymptoms] = useState("");
   const [loading, setLoading] = useState(false);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [allDoctors, setAllDoctors] = useState<Doctor[]>([]);
-  const [suggestedSpecialty, setSuggestedSpecialty] = useState<string | null>(null);
+  const [suggestedSpecialty, setSuggestedSpecialty] = useState<string | null>(
+    null
+  );
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
 
-  // Load all doctors on page load
-  useEffect(() => {
-    fetchAllDoctors();
-  }, []);
-
-  const fetchAllDoctors = async () => {
+  const fetchAllDoctors = useCallback(async () => {
     setLoading(true);
+    setError("");
+
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://TechTalks-SmartCare.test/api/doctors", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+
+      const response = await fetch(
+        "http://TechTalks-SmartCare.test/api/doctors",
+        {
+          headers: token
+            ? { Authorization: `Bearer ${token}` }
+            : {},
+        }
+      );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`Request failed with status ${response.status}`);
       }
 
       const data = await response.json();
       const doctorsData = data.data || [];
 
-      const mappedDoctors = doctorsData.map((doctor: any) => ({
+      const mappedDoctors: Doctor[] = doctorsData.map((doctor: any) => ({
         id: doctor.id,
         name: doctor.name || doctor.user?.name || "Unknown",
         specialty: doctor.specialization?.name || "General",
@@ -52,128 +66,265 @@ export default function SymptomChecker() {
       setDoctors(mappedDoctors);
     } catch (err) {
       console.error("Error fetching doctors:", err);
-      setError("Could not load doctors. Please try again.");
+      setError("We couldn't load the doctors. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Get matching specialty from symptoms using the specialties.ts mapping
+  useEffect(() => {
+    void fetchAllDoctors();
+  }, [fetchAllDoctors]);
+
   const getMatchingSpecialty = (text: string): Specialty | null => {
-    const lowerText = text.toLowerCase();
-    
+    const normalizedText = text.toLowerCase();
+
     for (const specialty of specialties) {
       for (const keyword of specialty.keywords) {
-        if (lowerText.includes(keyword)) {
+        if (normalizedText.includes(keyword.toLowerCase())) {
           return specialty;
         }
       }
     }
+
     return null;
   };
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
+    setError("");
+    setNotice("");
+    setHasSearched(true);
+
     if (!symptoms.trim()) {
       setDoctors(allDoctors);
       setSuggestedSpecialty(null);
       setHasSearched(false);
-      setError("");
+      setNotice("Enter a few details about your symptoms to get started.");
       return;
     }
 
-    setLoading(true);
-    setError("");
-    setHasSearched(true);
+    const matchedSpecialty = getMatchingSpecialty(symptoms);
 
-    try {
-      //  Find matching specialty from symptoms
-      const matchedSpecialty = getMatchingSpecialty(symptoms);
-      
-      if (matchedSpecialty) {
-        //  Filter doctors by the matched specialty
-        const filtered = allDoctors.filter(
-          (doctor) => doctor.specialty.toLowerCase() === matchedSpecialty.name.toLowerCase()
-        );
-        
-        setDoctors(filtered);
-        setSuggestedSpecialty(matchedSpecialty.name);
-        setError("");
-      } else {
-        //  No specialty matched - show all doctors with a message
+    if (matchedSpecialty) {
+      const filteredDoctors = allDoctors.filter(
+        (doctor) =>
+          doctor.specialty.trim().toLowerCase() ===
+          matchedSpecialty.name.trim().toLowerCase()
+      );
+
+      setSuggestedSpecialty(matchedSpecialty.name);
+      setDoctors(filteredDoctors);
+      setNotice(
+        filteredDoctors.length === 0
+          ? `No doctors are currently listed under ${matchedSpecialty.name}. You can browse all available doctors below.`
+          : ""
+      );
+
+      if (filteredDoctors.length === 0) {
         setDoctors(allDoctors);
-        setSuggestedSpecialty(null);
-        setError("No specific specialty matched. Showing all available doctors.");
       }
-
-    } catch (err) {
-      console.error("Error filtering doctors:", err);
-      setError("Could not filter doctors. Please try again.");
-    } finally {
-      setLoading(false);
+    } else {
+      setSuggestedSpecialty(null);
+      setDoctors(allDoctors);
+      setNotice("");
     }
   };
 
-  return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-2">
-          Describe Your Symptoms
-        </h2>
-        <p className="text-sm text-gray-500 mb-4">
-          Tell us what you're experiencing, and we'll recommend the most appropriate medical specialty.
-        </p>
+  const handleReset = () => {
+    setSymptoms("");
+    setDoctors(allDoctors);
+    setSuggestedSpecialty(null);
+    setError("");
+    setNotice("");
+    setHasSearched(false);
+  };
 
-        <div className="flex flex-col sm:flex-row gap-3">
-          <textarea
-            value={symptoms}
-            onChange={(e) => setSymptoms(e.target.value)}
-            placeholder="e.g., My heart has been beating very fast..."
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none min-h-[80px]"
-          />
+  const unmatchedSymptoms =
+    hasSearched && symptoms.trim() !== "" && !suggestedSpecialty;
+
+  return (
+    <main className="min-w-0 space-y-6 sm:space-y-8">
+      {/* Intro */}
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#075C70] via-[#086B7E] to-[#0E7490] p-5 text-white shadow-lg shadow-[#075C70]/10 sm:p-7 lg:p-8">
+        <div className="pointer-events-none absolute -right-8 -top-10 h-40 w-40 rounded-full border-[22px] border-white/[0.06] sm:h-56 sm:w-56" />
+
+        <div className="relative flex items-start gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/10 sm:h-14 sm:w-14">
+            <HeartPulse size={27} />
+          </div>
+
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-cyan-100">
+              Personalized guidance
+            </p>
+
+            <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+              Find the Right Doctor
+            </h1>
+
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-cyan-50 sm:text-base">
+              Describe what you're experiencing and explore doctors whose
+              specialty may be relevant to your symptoms.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Symptom form */}
+      <section className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-6 lg:p-7">
+        <div className="mb-5">
+          <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
+            Describe Your Symptoms
+          </h2>
+          <p className="mt-1.5 text-sm leading-6 text-slate-500">
+            Include what you feel, where you feel it, and any relevant details.
+            Avoid including personal information you don't need to share.
+          </p>
+        </div>
+
+        <label
+          htmlFor="symptom-description"
+          className="mb-2 block text-sm font-semibold text-slate-700"
+        >
+          What are you experiencing?
+        </label>
+
+        <textarea
+          id="symptom-description"
+          value={symptoms}
+          onChange={(event) => setSymptoms(event.target.value)}
+          onKeyDown={(event) => {
+            if (
+              (event.ctrlKey || event.metaKey) &&
+              event.key === "Enter" &&
+              !loading
+            ) {
+              handleSearch();
+            }
+          }}
+          maxLength={1500}
+          placeholder="For example: I've had a persistent cough and shortness of breath..."
+          rows={5}
+          className="min-h-32 w-full resize-y rounded-xl border border-slate-200 bg-slate-50/60 px-4 py-3 text-sm leading-6 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#0E7490] focus:bg-white focus:ring-4 focus:ring-[#0E7490]/10 sm:text-base"
+        />
+
+        <div className="mt-2 flex items-center justify-between gap-3 text-xs text-slate-400">
+          <span>Be as clear and specific as you can.</span>
+          <span className="shrink-0 tabular-nums">{symptoms.length}/1500</span>
+        </div>
+
+        {notice && !hasSearched && (
+          <div
+            role="status"
+            className="mt-4 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-5 text-amber-800"
+          >
+            <Info className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>{notice}</p>
+          </div>
+        )}
+
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
           <button
+            type="button"
             onClick={handleSearch}
             disabled={loading}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed self-start sm:self-auto"
+            className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#075C70] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#064B5B] focus:outline-none focus:ring-4 focus:ring-[#0E7490]/20 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:min-w-52"
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Searching...
+                <Loader2 size={18} className="animate-spin" />
+                Loading doctors...
               </>
             ) : (
               <>
-                <Search className="w-4 h-4" />
+                <Search size={18} />
                 Find the Right Doctor
               </>
             )}
           </button>
-        </div>
-      </div>
 
-      {suggestedSpecialty && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="text-lg font-semibold text-blue-800">
-            Suggested Specialty: {suggestedSpecialty}
-          </h3>
-          <p className="text-sm text-gray-600 mt-1">
-            Based on your symptoms, we recommend seeing a {suggestedSpecialty} specialist.
+          {(hasSearched || symptoms || notice) && (
+            <button
+              type="button"
+              onClick={handleReset}
+              className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-600 transition hover:border-[#B9DFE8] hover:bg-[#F1FAFC] hover:text-[#075C70] focus:outline-none focus:ring-4 focus:ring-[#0E7490]/10"
+            >
+              <RotateCcw size={16} />
+              Reset
+            </button>
+          )}
+        </div>
+
+        <div className="mt-5 flex items-start gap-2 border-t border-slate-100 pt-4">
+          <Info size={16} className="mt-0.5 shrink-0 text-[#0E7490]" />
+          <p className="text-xs leading-5 text-slate-500">
+            This tool matches keywords to specialties; it does not diagnose
+            medical conditions. If you have severe or sudden symptoms, seek
+            urgent medical care instead of waiting for an online recommendation.
           </p>
         </div>
-      )}
+      </section>
 
+      {/* API error */}
       {error && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
-          {error}
+        <section
+          role="alert"
+          className="rounded-2xl border border-rose-200 bg-rose-50 p-4 sm:p-5"
+        >
+          <p className="font-semibold text-rose-900">
+            Couldn't retrieve the doctors
+          </p>
+          <p className="mt-1 text-sm leading-6 text-rose-700">{error}</p>
+
+          <button
+            type="button"
+            onClick={() => void fetchAllDoctors()}
+            className="mt-3 rounded-lg border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-100"
+          >
+            Try again
+          </button>
+        </section>
+      )}
+
+      {/* Recommendation */}
+      {suggestedSpecialty && !error && (
+        <SuggestedSpecialty specialty={suggestedSpecialty} />
+      )}
+
+      {/* Unmatched keywords */}
+      {unmatchedSymptoms && !loading && !error && <EmptyState />}
+
+      {/* No doctors under matched specialty */}
+      {notice && hasSearched && suggestedSpecialty && !error && (
+        <div
+          role="status"
+          className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900"
+        >
+          {notice}
         </div>
       )}
 
-      {!loading && !error && doctors.length === 0 && hasSearched && (
-        <div className="text-center py-8 text-gray-500">
-          <p>No doctors found matching your symptoms. Please try different keywords.</p>
+      {/* Doctors */}
+      <section className="space-y-4">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+              {suggestedSpecialty ? "Recommended Doctors" : "Available Doctors"}
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              {loading
+                ? "Retrieving doctor information..."
+                : `${doctors.length} ${doctors.length === 1 ? "doctor" : "doctors"} available in this list`}
+            </p>
+          </div>
         </div>
-      )}
 
-      <DoctorList doctors={doctors} loading={loading} error={null} />
-    </div>
+        <DoctorList
+          doctors={doctors}
+          loading={loading}
+          error={error || null}
+        />
+      </section>
+    </main>
   );
 }

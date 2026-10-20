@@ -1,166 +1,130 @@
-import { ChevronRight, Clock, Copyright, HeartPulse, Mail, MapPin, Phone, } from "lucide-react";
+
 import Link from "next/link";
+import { HeartPulse, ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
 
-
+const quickLinks = [
+  { label: "Home", href: "/" },
+  { label: "About us", href: "/about" },
+  { label: "FAQs", href: "/faq" },
+  { label: "Sign in", href: "/login" },
+];
 
 export default function Footer() {
-    return (
-        <footer className="bg-slate-900 text-white mt-20">
-            <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-12">
-                <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] lg:grid-cols-4 gap-y-10 md:gap-x-16 text-center sm:text-left">
-                    {/*logo*/}
-                    <div>
-                        <div className="flex items-center justify-center sm:justify-start gap-2 mb-4">
+  return (
+    <footer className="relative overflow-hidden border-t border-slate-200/80 bg-[#f5fafc] text-slate-600">
+      {/* Subtle brand accent */}
+      <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-cyan-100/40 blur-3xl" />
 
-                            <h3 className="text-white text-lg font-semibold">
-                                <span className="text-blue-600">
-                                    Doctor
-                                </span>
-                                {" "}Appointment
-                            </h3>
-                        </div>
-                        <p className="text-gray-400 leading-7 sm:max-w-xs ">
-                            Book appointments with trusted doctors anytime, anywhere.
-                            Fast, secure, and reliable healthcare.
-                        </p>
-                    </div>
-                    {/* Quick Links*/}
-                    <div className="flex flex-col items-center md:items-start">
-                        <h3 className="text-center md:text-left text-lg font-semibold mb-4">
-                            Quick Links
-                        </h3>
+      <div className="relative mx-auto max-w-7xl px-5 pb-5 pt-10 sm:px-8 sm:pt-14 lg:px-12">
+        {/* Main footer */}
+        <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:gap-x-10 lg:grid-cols-[1.5fr_0.8fr_1fr] lg:gap-16">
+          {/* Brand */}
+          <div className="col-span-2 max-w-md lg:col-span-1">
+            <Link href="/" className="group inline-flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#075c70] text-white shadow-sm transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-11 sm:w-11">
+                <HeartPulse size={22} strokeWidth={1.8} />
+              </span>
 
-                        <ul className="space-y-3 text-left">
-                            <li>
-                                <Link href="/" className="hover:text-blue-500 transition-colors duration-300">
-                                    <ChevronRight
-                                        size={16}
-                                        className="text-blue-500 inline-block mr-2 "
-                                    />Home
-                                </Link>
-                            </li>
+              <span className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+                Smart<span className="text-[#0e7490]">Care</span>
+              </span>
+            </Link>
 
-                            <li>
-                                <Link href="/about" className="hover:text-blue-500 transition-colors duration-300">
-                                    <ChevronRight
-                                        size={16}
-                                        className="text-blue-500 inline-block mr-2"
-                                    />About
-                                </Link>
-                            </li>
+            <p className="mt-4 max-w-sm text-sm leading-6 text-slate-500 sm:mt-5 sm:text-[15px] sm:leading-7">
+              Making healthcare simpler by helping patients connect with
+              doctors and manage appointments with ease.
+            </p>
 
+            <p className="mt-4 text-xs font-medium tracking-wide text-[#0e7490] sm:mt-5 sm:text-sm">
+              Better access. Thoughtful care.
+            </p>
+          </div>
 
+          {/* Quick links */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-900 sm:text-base">
+              Quick links
+            </h3>
 
-                            <li>
-                                <Link href="/login" className="hover:text-blue-500 transition-colors duration-300">
-                                    <ChevronRight
-                                        size={16}
-                                        className="text-blue-500 inline-block mr-2"
-                                    />Login
-                                </Link>
-                            </li>
+            <ul className="mt-4 space-y-3 sm:mt-5 sm:space-y-3.5">
+              {quickLinks.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="group inline-flex items-center gap-1 text-xs text-slate-500 transition-colors hover:text-[#0e7490] sm:text-sm"
+                  >
+                    {link.label}
+                    <ArrowUpRight
+                      size={13}
+                      className="opacity-0 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-                            <li>
-                                <Link href="/register" className="hover:text-blue-500 transition-colors duration-300">
-                                    <ChevronRight
-                                        size={16}
-                                        className="text-blue-500 inline-block mr-2"
-                                    />Register
-                                </Link>
-                            </li>
-                        </ul>
-                    </div>
+          {/* Contact */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-900 sm:text-base">
+              Get in touch
+            </h3>
 
-                    {/* Contact */}
-                    <div className="w-full ">
-                        <h3 className="text-white text-lg font-semibold mb-4">
-                            Contact Us
-                        </h3>
+            <ul className="mt-4 space-y-4 sm:mt-5 sm:space-y-5">
+              <li className="flex items-start gap-2.5">
+                <Mail
+                  size={16}
+                  className="mt-0.5 shrink-0 text-[#0e7490]"
+                />
+                <a
+                  href="mailto:contact@smartcare.com"
+                  className="break-all text-xs leading-5 text-slate-500 transition-colors hover:text-[#0e7490] sm:text-sm"
+                >
+                  contact@smartcare.com
+                </a>
+              </li>
 
-                        <div className="space-y-5">
-                            <div className="flex items-start justify-center sm:justify-start gap-3">
-                                <MapPin className="text-blue-500 mt-1" size={18} />
-                                <a
-                                    href="https://www.google.com/maps?q=Beirut,Lebanon"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-white hover:text-blue-300 transition-colors"
-                                >
-                                    Beirut, Lebanon
-                                </a>
-                            </div>
+              <li className="flex items-start gap-2.5">
+                <Phone
+                  size={16}
+                  className="mt-0.5 shrink-0 text-[#0e7490]"
+                />
+                <a
+                  href="tel:+96100000000"
+                  className="text-xs leading-5 text-slate-500 transition-colors hover:text-[#0e7490] sm:text-sm"
+                >
+                  +961 00 000 000
+                </a>
+              </li>
 
-                            <div className="flex items-start justify-center sm:justify-start gap-3">
-                                <Phone className="text-blue-500 mt-1" size={18} />
-                                <a
-                                    href="tel:+96170123456"
-                                    className="text-white hover:text-blue-300 transition-colors"
-                                >
-                                    +961 70 123 456
-                                </a>
-                            </div>
-                            <div className="flex items-start justify-center sm:justify-start gap-3">
-                                <Mail className="text-blue-500 mt-1" size={18} />
-                                <a
-                                    href="mailto:support@bookappointment.com"
-                                    className="text-white hover:text-blue-300 transition-colors"
-                                >
-                                    support@bookappointment.com
-                                </a>
-                            </div>
-                        
-                        </div>
-                    </div>
+              <li className="flex items-start gap-2.5">
+                <MapPin
+                  size={16}
+                  className="mt-0.5 shrink-0 text-[#0e7490]"
+                />
+                <span className="text-xs leading-5 text-slate-500 sm:text-sm">
+                  Lebanon
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-                    {/* Working Hours */}
-                    <div className="w-full md:justify-self-end lg:justify-self-auto">
-                        <h3 className="text-white text-lg font-semibold mb-4">
-                            Working Hours
-                        </h3>
+        {/* Bottom bar */}
+        <div className="mt-9 flex flex-col gap-3 border-t border-slate-200/80 pt-5 sm:mt-12 sm:flex-row sm:items-center sm:justify-between sm:pt-6">
+          <p className="text-[11px] text-slate-500 sm:text-xs">
+            © {new Date().getFullYear()} SmartCare. All rights reserved.
+          </p>
 
-                        <div className="space-y-5">
-
-                            <div className="flex items-start justify-center sm:justify-start gap-3">
-                                <Clock className="text-blue-500 mt-1" size={18} />
-                                <div>
-                                    <p className="font-medium text-white">Monday - Friday</p>
-                                    <p className="text-gray-400">9:00 AM - 6:00 PM</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start justify-center sm:justify-start gap-3">
-                                <Clock className="text-blue-500 mt-1" size={18} />
-                                <div>
-                                    <p className="font-medium text-white">Saturday</p>
-                                    <p className="text-gray-400">9:00 AM - 2:00 PM</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start justify-center sm:justify-start gap-3">
-                                <Clock className="text-blue-500 mt-1" size={18} />
-                                <div>
-                                    <p className="font-medium text-white">Sunday</p>
-                                    <p className="text-gray-400">Closed</p>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                {/*button*/}
-                <div className="border-t border-slate-700 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-
-                    <p className="flex flex-wrap justify-center md:justify-start items-center gap-2 text-center md:text-left text-sm text-gray-300">
-                        <Copyright size={16} className="mt-1" /> {new Date().getFullYear()}
-                        <span className="text-blue-600"> Doctor Appointment. </span>
-                        All rights reserved.
-                    </p>
-                    <div>
-                        <p>Privacy Policy{" "}|{" "}Terms of Service</p>
-                    </div>
-                </div>
-
-            </div>
-        </footer>
-    )
+          <Link
+            href="/"
+            className="inline-flex w-fit items-center gap-2 text-[11px] font-medium text-slate-500 transition-colors hover:text-[#0e7490] sm:text-xs"
+          >
+            Your health, made simpler
+            <span className="h-1.5 w-1.5 rounded-full bg-[#0e7490]" />
+          </Link>
+        </div>
+      </div>
+    </footer>
+  );
 }
