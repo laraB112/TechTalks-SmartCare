@@ -1,7 +1,7 @@
 
 import { ReactNode } from "react";
-import SideBar from "./SideBar";
-import TopNavBar from "./TopNavBar";
+import Sidebar from "./SideBar";
+import TopNavbar from "./TopNavBar";
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -13,14 +13,16 @@ export default function DashboardLayout({
   role,
 }: DashboardLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-[#F4F8FA]">
-      <SideBar role={role} />
+    <div className="min-h-screen bg-[#F4F8FA] md:flex">
+      <Sidebar role={role} />
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <TopNavBar />
+      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
+        <TopNavbar />
 
-        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
-          {children}
+        <main className="min-w-0 flex-1 p-3 sm:p-5 lg:p-7 xl:p-8">
+          <div className="mx-auto w-full max-w-[1600px] min-w-0">
+            {children}
+          </div>
         </main>
       </div>
     </div>
