@@ -13,7 +13,7 @@ import {
   Phone,
   CalendarDays,
   HeartPulse,
-  Sparkles,
+ 
   Loader2,
   AlertCircle,
   CheckCircle2,
@@ -137,7 +137,7 @@ export default function RegisterPage() {
 
           <div className="relative z-10 my-5 sm:my-10">
             <span className="mb-3 inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[9px] font-medium sm:mb-5 sm:gap-2 sm:px-3 sm:text-xs">
-              <Sparkles className="h-3 w-3" />
+              
               Start your journey
             </span>
 

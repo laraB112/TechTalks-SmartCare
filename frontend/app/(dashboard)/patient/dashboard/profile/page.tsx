@@ -16,9 +16,7 @@ import {
   AlertCircle,
   UserCircle,
   Clock,
-  HeartPulse,
   ArrowLeft,
-  MapPin,
 } from "lucide-react";
 
 interface ProfileUser {
@@ -51,10 +49,10 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter();
-
   const [formData, setFormData] =
     useState<ProfileFormData>(initialFormData);
+
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -184,10 +182,10 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-9 w-9 animate-spin text-[#0E8498]" />
-          <p className="text-sm font-medium text-slate-500">
+      <div className="flex min-h-[45vh] items-center justify-center px-4">
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="h-7 w-7 animate-spin text-[#0E8498]" />
+          <p className="text-sm text-slate-500">
             Loading your profile...
           </p>
         </div>
@@ -220,7 +218,10 @@ export default function ProfilePage() {
     },
     {
       label: "Age",
-      value: user.age ? `${user.age} years old` : "Not provided",
+      value:
+        user.age !== undefined && user.age !== null
+          ? `${user.age} years old`
+          : "Not provided",
       icon: Calendar,
     },
     {
@@ -233,28 +234,29 @@ export default function ProfilePage() {
   ];
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-9 lg:px-8">
-      {/* Page heading */}
-      <div className="mb-7">
+    <main className="mx-auto w-full max-w-5xl px-3 py-4 sm:px-6 sm:py-7 lg:px-8">
+      {/* Compact page heading */}
+      <div className="mb-4 sm:mb-6">
         <button
           type="button"
           onClick={() => router.back()}
-          className="mb-5 inline-flex items-center gap-2 rounded-lg text-sm font-medium text-slate-500 transition hover:text-[#075C70]"
+          className="mb-3 inline-flex items-center gap-1.5 rounded-lg py-1 text-xs font-medium text-slate-500 transition hover:text-[#075C70] sm:mb-4 sm:text-sm"
         >
-          <ArrowLeft size={17} />
+          <ArrowLeft size={15} />
           Back
         </button>
 
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF7FA] text-[#075C70]">
-            <User size={24} />
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EAF7FA] text-[#075C70] sm:h-12 sm:w-12 sm:rounded-2xl">
+            <User size={21} />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+
+          <div className="min-w-0">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-3xl">
               My Profile
             </h1>
-            <p className="mt-1 text-sm text-slate-500 sm:text-base">
-              Manage your personal information and account details.
+            <p className="mt-0.5 text-xs leading-4 text-slate-500 sm:mt-1 sm:text-sm">
+              Manage your personal and account details.
             </p>
           </div>
         </div>
@@ -264,10 +266,10 @@ export default function ProfilePage() {
       {success && (
         <div
           role="status"
-          className="mb-5 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"
+          className="mb-3 flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800 sm:mb-5 sm:gap-3 sm:rounded-2xl sm:p-4 sm:text-sm"
         >
-          <CheckCircle className="mt-0.5 h-5 w-5 shrink-0" />
-          <div>
+          <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
+          <div className="min-w-0">
             <p className="font-semibold">Changes saved</p>
             <p className="mt-0.5">{success}</p>
           </div>
@@ -277,52 +279,46 @@ export default function ProfilePage() {
       {error && (
         <div
           role="alert"
-          className="mb-5 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+          className="mb-3 flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700 sm:mb-5 sm:gap-3 sm:rounded-2xl sm:p-4 sm:text-sm"
         >
-          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
-          <div>
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
+          <div className="min-w-0">
             <p className="font-semibold">Something went wrong</p>
             <p className="mt-0.5 break-words">{error}</p>
           </div>
         </div>
       )}
 
-      {/* Profile overview */}
-      <section className="relative mb-6 overflow-hidden rounded-3xl border border-[#D8EBF0] bg-white shadow-[0_8px_30px_rgba(7,92,112,0.06)]">
-        <div className="h-2 bg-gradient-to-r from-[#075C70] via-[#0E8498] to-cyan-200" />
+      {/* Compact profile overview */}
+      <section className="mb-4 overflow-hidden rounded-2xl border border-[#D8EBF0] bg-white shadow-[0_4px_18px_rgba(7,92,112,0.05)] sm:mb-5 sm:rounded-3xl">
+        <div className="h-1 bg-gradient-to-r from-[#075C70] via-[#0E8498] to-cyan-200 sm:h-1.5" />
 
-        <div className="relative flex flex-col gap-5 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-7">
-          <div className="pointer-events-none absolute -right-12 -top-20 h-48 w-48 rounded-full bg-[#EAF7FA] blur-3xl" />
+        <div className="flex items-center gap-3 p-3.5 sm:gap-5 sm:p-6">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#075C70] text-white sm:h-[68px] sm:w-[68px] sm:rounded-2xl">
+            <UserCircle size={29} strokeWidth={1.6} className="sm:hidden" />
+            <UserCircle
+              size={39}
+              strokeWidth={1.6}
+              className="hidden sm:block"
+            />
+          </div>
 
-          <div className="relative flex min-w-0 items-center gap-4">
-            <div className="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#075C70] to-[#0E8498] text-white shadow-lg shadow-[#075C70]/15 sm:h-20 sm:w-20 sm:rounded-3xl">
-              <UserCircle
-                size={40}
-                strokeWidth={1.5}
-                className="sm:hidden"
-              />
-              <UserCircle
-                size={46}
-                strokeWidth={1.5}
-                className="hidden sm:block"
-              />
-            </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#0E8498] sm:text-xs sm:tracking-[0.14em]">
+              SmartCare account
+            </p>
 
-            <div className="min-w-0">
-              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#0E8498]">
-                SmartCare account
-              </p>
-              <h2 className="break-words text-xl font-bold text-slate-900 sm:text-2xl">
-                {user.name}
-              </h2>
-              <p className="mt-1 break-all text-sm text-slate-500">
-                {user.email}
-              </p>
-              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[#D8EBF0] bg-[#F0FAFC] px-3 py-1 text-xs font-semibold capitalize text-[#075C70]">
-                <Shield size={13} />
-                {user.role || "User"}
-              </span>
-            </div>
+            <h2 className="mt-0.5 break-words text-base font-bold leading-5 text-slate-900 sm:mt-1 sm:text-xl">
+              {user.name}
+            </h2>
+
+            <p className="mt-0.5 break-all text-[11px] leading-4 text-slate-500 sm:mt-1 sm:text-sm">
+              {user.email}
+            </p>
+
+            <span className="mt-1.5 inline-flex items-center rounded-full border border-[#D8EBF0] bg-[#F0FAFC] px-2 py-0.5 text-[10px] font-semibold capitalize text-[#075C70] sm:mt-2 sm:px-2.5 sm:py-1 sm:text-xs">
+              {user.role || "User"}
+            </span>
           </div>
 
           {!isEditing && (
@@ -333,67 +329,68 @@ export default function ProfilePage() {
                 setSuccess("");
                 setError("");
               }}
-              className="relative inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#075C70] px-5 py-3 text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[#064B5B] hover:shadow-md sm:w-auto"
+              aria-label="Edit profile"
+              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#075C70] px-2.5 py-2 text-xs font-semibold text-white transition hover:bg-[#064B5B] sm:gap-2 sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm"
             >
-              <Edit size={16} />
-              Edit profile
+              <Edit size={14} />
+              <span className="sm:inline">Edit</span>
             </button>
           )}
         </div>
       </section>
 
-      {/* Main profile content */}
-      <section className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_8px_30px_rgba(15,23,42,0.04)]">
-        <div className="border-b border-slate-100 px-5 py-5 sm:px-7">
-          <h2 className="text-lg font-bold text-slate-900">
+      {/* Personal information / edit form */}
+      <section className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_4px_18px_rgba(15,23,42,0.035)] sm:rounded-3xl">
+        <div className="border-b border-slate-100 px-3.5 py-3 sm:px-6 sm:py-5">
+          <h2 className="text-sm font-bold text-slate-900 sm:text-lg">
             {isEditing ? "Edit your information" : "Personal information"}
           </h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-0.5 text-[11px] leading-4 text-slate-500 sm:mt-1 sm:text-sm">
             {isEditing
-              ? "Update your details below and save your changes."
-              : "Your personal details associated with your SmartCare account."}
+              ? "Update your details and save your changes."
+              : "Your details associated with your SmartCare account."}
           </p>
         </div>
 
         {!isEditing ? (
-          <div className="grid grid-cols-1 gap-0 sm:grid-cols-2">
-            {details.map((detail, index) => {
+          <div className="grid grid-cols-2 gap-2.5 p-2.5 sm:gap-3.5 sm:p-4 lg:grid-cols-3">
+            {details.map((detail) => {
               const Icon = detail.icon;
 
               return (
                 <div
                   key={detail.label}
-                  className={`flex min-w-0 items-start gap-4 p-5 transition-colors hover:bg-[#F8FCFD] sm:p-6 ${
-                    index < 4 ? "border-b border-slate-100" : ""
-                  } ${
-                    index % 2 === 0 ? "sm:border-r sm:border-slate-100" : ""
-                  }`}
+                  className="flex min-w-0 flex-col rounded-xl border border-slate-100 bg-white p-2.5 transition-colors hover:border-[#D8EBF0] hover:bg-[#F8FCFD] sm:rounded-2xl sm:p-4"
                 >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#EAF7FA] text-[#0E8498]">
-                    <Icon size={20} strokeWidth={1.8} />
+                  <div className="mb-2 flex h-7 w-7 items-center justify-center rounded-lg bg-[#EAF7FA] text-[#0E8498] sm:mb-3 sm:h-9 sm:w-9 sm:rounded-xl">
+                    <Icon size={15} strokeWidth={1.8} className="sm:hidden" />
+                    <Icon
+                      size={19}
+                      strokeWidth={1.8}
+                      className="hidden sm:block"
+                    />
                   </div>
 
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-xs font-medium text-slate-500 sm:text-sm">
-                      {detail.label}
-                    </p>
-                    <p className="mt-1 break-words text-sm font-semibold text-slate-800 sm:text-base">
-                      {detail.value}
-                    </p>
-                  </div>
+                  <p className="text-[10px] font-medium leading-4 text-slate-500 sm:text-xs">
+                    {detail.label}
+                  </p>
+
+                  <p className="mt-0.5 break-words text-xs font-semibold leading-[1.15rem] text-slate-800 sm:mt-1 sm:text-sm sm:leading-5">
+                    {detail.value}
+                  </p>
                 </div>
               );
             })}
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-5 sm:p-7">
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <form onSubmit={handleSubmit} className="p-3.5 sm:p-6">
+            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-5">
               <div>
                 <label
                   htmlFor="name"
-                  className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700"
+                  className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700 sm:mb-2 sm:text-sm"
                 >
-                  <User size={16} className="text-[#0E8498]" />
+                  <User size={14} className="text-[#0E8498]" />
                   Full name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -404,7 +401,7 @@ export default function ProfilePage() {
                   onChange={handleChange}
                   autoComplete="name"
                   maxLength={255}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0E8498] focus:bg-white focus:ring-4 focus:ring-[#0E8498]/10"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0E8498] focus:bg-white focus:ring-2 focus:ring-[#0E8498]/10 sm:rounded-xl sm:px-4 sm:py-3"
                   placeholder="Enter your full name"
                   required
                 />
@@ -413,9 +410,9 @@ export default function ProfilePage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700"
+                  className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700 sm:mb-2 sm:text-sm"
                 >
-                  <Mail size={16} className="text-[#0E8498]" />
+                  <Mail size={14} className="text-[#0E8498]" />
                   Email address
                 </label>
                 <input
@@ -423,19 +420,19 @@ export default function ProfilePage() {
                   type="email"
                   value={user.email}
                   readOnly
-                  className="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm text-slate-500 outline-none"
+                  className="w-full cursor-not-allowed rounded-lg border border-slate-200 bg-slate-100 px-3 py-2.5 text-sm text-slate-500 outline-none sm:rounded-xl sm:px-4 sm:py-3"
                 />
-                <p className="mt-1.5 text-xs text-slate-400">
-                  Your email address cannot be changed here.
+                <p className="mt-1 text-[10px] text-slate-400 sm:text-xs">
+                  Email cannot be changed here.
                 </p>
               </div>
 
               <div>
                 <label
                   htmlFor="phone"
-                  className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700"
+                  className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700 sm:mb-2 sm:text-sm"
                 >
-                  <Phone size={16} className="text-[#0E8498]" />
+                  <Phone size={14} className="text-[#0E8498]" />
                   Phone number
                 </label>
                 <input
@@ -446,7 +443,7 @@ export default function ProfilePage() {
                   onChange={handleChange}
                   autoComplete="tel"
                   maxLength={30}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0E8498] focus:bg-white focus:ring-4 focus:ring-[#0E8498]/10"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0E8498] focus:bg-white focus:ring-2 focus:ring-[#0E8498]/10 sm:rounded-xl sm:px-4 sm:py-3"
                   placeholder="e.g. +961 123 4567"
                 />
               </div>
@@ -454,9 +451,9 @@ export default function ProfilePage() {
               <div>
                 <label
                   htmlFor="gender"
-                  className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700"
+                  className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700 sm:mb-2 sm:text-sm"
                 >
-                  <UserCircle size={16} className="text-[#0E8498]" />
+                  <UserCircle size={14} className="text-[#0E8498]" />
                   Gender
                 </label>
                 <select
@@ -464,7 +461,7 @@ export default function ProfilePage() {
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#0E8498] focus:bg-white focus:ring-4 focus:ring-[#0E8498]/10"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#0E8498] focus:bg-white focus:ring-2 focus:ring-[#0E8498]/10 sm:rounded-xl sm:px-4 sm:py-3"
                 >
                   <option value="">Select gender</option>
                   <option value="male">Male</option>
@@ -475,9 +472,9 @@ export default function ProfilePage() {
               <div>
                 <label
                   htmlFor="age"
-                  className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700"
+                  className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700 sm:mb-2 sm:text-sm"
                 >
-                  <Clock size={16} className="text-[#0E8498]" />
+                  <Clock size={14} className="text-[#0E8498]" />
                   Age
                 </label>
                 <input
@@ -489,36 +486,36 @@ export default function ProfilePage() {
                   min="1"
                   max="150"
                   step="1"
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/70 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0E8498] focus:bg-white focus:ring-4 focus:ring-[#0E8498]/10"
+                  className="w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#0E8498] focus:bg-white focus:ring-2 focus:ring-[#0E8498]/10 sm:rounded-xl sm:px-4 sm:py-3"
                   placeholder="Enter your age"
                 />
               </div>
             </div>
 
-            <div className="mt-7 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+            <div className="mt-5 flex flex-col-reverse gap-2.5 border-t border-slate-100 pt-4 sm:mt-7 sm:flex-row sm:justify-end sm:gap-3 sm:pt-5">
               <button
                 type="button"
                 onClick={handleCancel}
                 disabled={loading}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 sm:rounded-xl sm:px-5 sm:py-3 sm:text-sm"
               >
-                <X size={16} />
+                <X size={15} />
                 Cancel
               </button>
 
               <button
                 type="submit"
                 disabled={loading || !formData.name.trim()}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#075C70] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#064B5B] disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#075C70] px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#064B5B] disabled:cursor-not-allowed disabled:opacity-60 sm:rounded-xl sm:px-5 sm:py-3 sm:text-sm"
               >
                 {loading ? (
                   <>
-                    <Loader2 size={16} className="animate-spin" />
+                    <Loader2 size={15} className="animate-spin" />
                     Saving changes...
                   </>
                 ) : (
                   <>
-                    <Save size={16} />
+                    <Save size={15} />
                     Save changes
                   </>
                 )}
@@ -528,9 +525,9 @@ export default function ProfilePage() {
         )}
       </section>
 
-      {/* Small footer note */}
-      <div className="mt-5 flex items-start gap-2.5 px-1 text-xs leading-5 text-slate-500">
-        <Shield size={15} className="mt-0.5 shrink-0 text-[#0E8498]" />
+      {/* Compact footer note */}
+      <div className="mt-3 flex items-start gap-2 px-1 text-[10px] leading-4 text-slate-500 sm:mt-4 sm:gap-2.5 sm:text-xs sm:leading-5">
+        <Shield size={13} className="mt-0.5 shrink-0 text-[#0E8498] sm:h-[15px] sm:w-[15px]" />
         <p>
           Keep your contact information up to date so your healthcare team can
           reach you when needed.

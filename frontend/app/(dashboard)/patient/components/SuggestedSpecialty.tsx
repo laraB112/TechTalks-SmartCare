@@ -87,19 +87,6 @@ export default function SuggestedSpecialty({
       <div className="h-1 w-full bg-gradient-to-r from-[#075C70] via-[#0E8498] to-cyan-200" />
 
       <div className="relative p-5 sm:p-7 lg:p-8">
-        {/* Section label */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#D8EBF0] bg-[#F0FAFC] px-3 py-1.5 text-xs font-semibold text-[#075C70]">
-            <Sparkles size={14} />
-            Symptom guide
-          </div>
-
-          <div className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500">
-            <CheckCircle2 size={15} className="text-[#0E8498]" />
-            Specialty suggestion
-          </div>
-        </div>
-
         {/* Recommendation content */}
         <div className="mt-6 flex min-w-0 flex-col gap-5 sm:mt-7 sm:flex-row sm:items-start sm:gap-6">
           {/* Specialty icon */}

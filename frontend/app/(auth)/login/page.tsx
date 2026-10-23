@@ -10,7 +10,7 @@ import {
   LockKeyhole,
   Mail,
   ShieldCheck,
-  Sparkles,
+  
   HeartPulse,
   Loader2,
   AlertCircle,
@@ -102,7 +102,7 @@ export default function LoginPage() {
 
           <div className="relative z-10 my-6 sm:my-10">
             <span className="mb-3 inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[9px] font-medium sm:mb-5 sm:gap-2 sm:px-3 sm:text-xs">
-              <Sparkles className="h-3 w-3" />
+             
               Your health, simplified
             </span>
 
