@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -11,6 +12,7 @@ import {
   Clock,
   Phone,
   UserRound,
+  CalendarClock,
 } from "lucide-react";
 
 interface Props {
@@ -30,6 +32,35 @@ const statusStyles: Record<string, string> = {
   cancelled: "bg-slate-100 text-slate-600 ring-1 ring-slate-200",
 };
 
+const API_URL = "http://TechTalks-SmartCare.test/api";
+
+function formatRequestedDate(date?: string | null) {
+  if (!date) return "—";
+
+  // Parse the date as a local calendar date to avoid timezone shifts.
+  const parts = date.slice(0, 10).split("-").map(Number);
+
+  if (
+    parts.length !== 3 ||
+    parts.some((part) => !Number.isFinite(part)) ||
+    parts[0] < 1 ||
+    parts[1] < 1 ||
+    parts[1] > 12 ||
+    parts[2] < 1 ||
+    parts[2] > 31
+  ) {
+    return date;
+  }
+
+  const parsed = new Date(parts[0], parts[1] - 1, parts[2]);
+
+  return parsed.toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export default function AppointmentRow({
   appointment,
   onStatusUpdate,
@@ -39,6 +70,13 @@ export default function AppointmentRow({
   const [actionError, setActionError] = useState("");
 
   const status = appointment.status?.toLowerCase() || "";
+
+  const requestedDate = appointment.requestedDate;
+  const requestedTime = appointment.requestedTime;
+
+  const hasRescheduleRequest = Boolean(
+    requestedDate && requestedTime
+  );
 
   const canAccept = status === "pending";
   const canReject = status === "pending" || status === "waiting";
@@ -68,8 +106,12 @@ export default function AppointmentRow({
         return;
       }
 
+      const isRescheduleAction =
+        action === "reschedule/approve" ||
+        action === "reschedule/reject";
+
       const response = await fetch(
-        `http://TechTalks-SmartCare.test/api/doctor/appointments/${appointment.id}/${action}`,
+        `${API_URL}/doctor/appointments/${appointment.id}/${action}`,
         {
           method: "PATCH",
           headers: {
@@ -83,13 +125,18 @@ export default function AppointmentRow({
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setActionError(data.message || "Failed to update appointment.");
+        setActionError(
+          data.message ||
+          (isRescheduleAction
+            ? "Unable to process the reschedule request."
+            : "Failed to update appointment.")
+        );
         return;
       }
 
       onStatusUpdate?.();
     } catch (error) {
-      console.error("Error updating appointment status:", error);
+      console.error("Error updating appointment:", error);
       setActionError("Unable to connect to the server. Please try again.");
     } finally {
       setLoading(false);
@@ -133,17 +180,88 @@ export default function AppointmentRow({
     },
   ];
 
+  const rescheduleActions = [
+    {
+      action: "reschedule/approve",
+      label: "Approve reschedule request",
+      text: "Approve change",
+      icon: Check,
+      style:
+        "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100",
+    },
+    {
+      action: "reschedule/reject",
+      label: "Reject reschedule request",
+      text: "Decline change",
+      icon: X,
+      style:
+        "border-red-200 bg-red-50 text-red-700 hover:bg-red-100",
+    },
+  ];
+
   const statusBadge = (
     <span
-      className={`inline-flex max-w-full items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize ${
-        statusStyles[status] ||
+      className={`inline-flex max-w-full items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize ${statusStyles[status] ||
         "bg-slate-100 text-slate-600 ring-1 ring-slate-200"
-      }`}
+        }`}
     >
       <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-current" />
       {appointment.status || "Unknown"}
     </span>
   );
+
+  const reschedulePanel = hasRescheduleRequest ? (
+    <div className="mt-3 w-full min-w-0 rounded-xl border border-amber-200 bg-amber-50/70 p-3">
+      <div className="flex items-start gap-2">
+        <CalendarClock className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" />
+
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-bold text-amber-900">
+            Reschedule request
+          </p>
+
+          <p className="mt-1 text-xs leading-relaxed text-slate-600">
+            Current:{" "}
+            <span className="font-medium text-slate-800">
+              {formatRequestedDate(appointment.date)} at{" "}
+              {appointment.time || "—"}
+            </span>
+          </p>
+
+          <p className="mt-1 break-words text-xs leading-relaxed text-slate-600">
+            Requested:{" "}
+            <span className="font-semibold text-amber-900">
+              {formatRequestedDate(requestedDate)} at {requestedTime}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        {rescheduleActions.map((button) => {
+          const Icon = button.icon;
+
+          return (
+            <button
+              key={button.action}
+              type="button"
+              onClick={() => handleAction(button.action)}
+              disabled={loading}
+              title={button.label}
+              className={`inline-flex min-h-8 items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 ${button.style}`}
+            >
+              {loading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Icon className="h-3.5 w-3.5 shrink-0" />
+              )}
+              {button.text}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  ) : null;
 
   const actions = (
     <>
@@ -180,10 +298,7 @@ export default function AppointmentRow({
       )}
 
       {actionError && (
-        <p
-          role="alert"
-          className="mt-2 text-xs leading-relaxed text-red-600"
-        >
+        <p role="alert" className="mt-2 text-xs leading-relaxed text-red-600">
           {actionError}
         </p>
       )}
@@ -242,7 +357,7 @@ export default function AppointmentRow({
           </div>
 
           {showActions && (
-            <div className="flex shrink-0 items-center gap-1">
+            <div className="flex shrink-0 flex-wrap items-center gap-1">
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin text-teal-700" />
               ) : (
@@ -270,6 +385,7 @@ export default function AppointmentRow({
           )}
         </div>
 
+        {reschedulePanel}
         {actionError && (
           <p role="alert" className="mt-2 text-xs text-red-600">
             {actionError}
@@ -300,6 +416,11 @@ export default function AppointmentRow({
             <p className="truncate text-sm font-semibold text-slate-800">
               {appointment.patientName || "Unknown patient"}
             </p>
+            {appointment.phone && (
+              <p className="mt-1 text-xs text-slate-500">
+                {appointment.phone}
+              </p>
+            )}
           </div>
         </div>
       </td>
@@ -333,6 +454,7 @@ export default function AppointmentRow({
           {statusBadge}
           {actions}
         </div>
+        {reschedulePanel}
       </td>
     </tr>
   );

@@ -2,28 +2,43 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\AppointmentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
+use App\Models\Doctor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Doctor;
-use App\Enums\AppointmentStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class AppointmentController extends Controller
 {
-    // Book an appointment
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'doctor_id' => 'required|exists:doctors,id',
-            'specialization' => 'required|string',
-            'date' => 'required|date|after:today',
-            'time' => 'required',
-            'notes' => 'nullable|string',
+            'doctor_id' => ['required', 'exists:doctors,id'],
+            'specialization' => ['required', 'string'],
+            'date' => ['required', 'date', 'after:today'],
+            'time' => ['required', 'date_format:H:i'],
+            'notes' => ['nullable', 'string'],
         ]);
+
+        $conflict = Appointment::where('doctor_id', $validated['doctor_id'])
+            ->whereDate('date', $validated['date'])
+            ->whereTime('time', $validated['time'])
+            ->whereIn('status', [
+                AppointmentStatus::PENDING->value,
+                AppointmentStatus::ACCEPTED->value,
+                AppointmentStatus::IN_PROGRESS->value,
+            ])
+            ->exists();
+
+        if ($conflict) {
+            throw ValidationException::withMessages([
+                'time' => 'This appointment slot is no longer available.',
+            ]);
+        }
 
         $appointment = Appointment::create([
             'patient_id' => Auth::id(),
@@ -32,28 +47,25 @@ class AppointmentController extends Controller
             'date' => $validated['date'],
             'time' => $validated['time'],
             'notes' => $validated['notes'] ?? null,
-            'status' => 'pending',
+            'status' => AppointmentStatus::PENDING,
         ]);
 
         return response()->json([
-            'message' => 'Appointment booked successfully',
-            'appointment' => $appointment,
+            'message' => 'Appointment booked successfully.',
+            'appointment' => $appointment->load(['doctor.user', 'patient']),
         ], 201);
     }
 
-    // View patient's appointments
-    // View patient's visible appointments
     public function index()
     {
-        $appointments = Appointment::where('patient_id', Auth::id())
+        return Appointment::where('patient_id', Auth::id())
             ->whereNull('hidden_at')
             ->with(['doctor.user', 'hospital'])
-            ->orderBy('date', 'asc')
+            ->orderBy('date')
+            ->orderBy('time')
             ->get();
-
-        return response()->json($appointments);
     }
-    // Hide an appointment from the patient's list
+
     public function hide($appointment)
     {
         $appointment = Appointment::where('id', $appointment)
@@ -68,60 +80,63 @@ class AppointmentController extends Controller
         ]);
     }
 
-    public function reschedule(Request $request, $id)
+    /**
+     * Submit a reschedule request without changing the booked appointment.
+     */
+    public function reschedule(Request $request, $appointment)
     {
         $validated = $request->validate([
             'date' => ['required', 'date', 'after_or_equal:today'],
             'time' => ['required', 'date_format:H:i'],
         ]);
 
-        $appointment = Appointment::where('patient_id', Auth::id())
-            ->findOrFail($id);
-
-        $status = $appointment->status;
-
-        if (
-            !in_array($status, [
-                AppointmentStatus::PENDING,
-                AppointmentStatus::ACCEPTED,
-            ], true)
-        ) {
-            return response()->json([
-                'message' => 'Only pending or accepted appointments can be rescheduled.',
-            ], 422);
-        }
-
         $newDate = $validated['date'];
         $newTime = $validated['time'];
 
         if (now()->parse("$newDate $newTime")->isPast()) {
-            return response()->json([
-                'message' => 'The new appointment time must be in the future.',
-            ], 422);
+            throw ValidationException::withMessages([
+                'time' => 'The requested appointment time must be in the future.',
+            ]);
         }
 
-        $updatedAppointment = DB::transaction(function () use ($appointment, $newDate, $newTime) {
-            $lockedAppointment = Appointment::whereKey($appointment->id)
+        $updatedAppointment = DB::transaction(function () use (
+            $appointment,
+            $newDate,
+            $newTime
+        ) {
+            $record = Appointment::where('patient_id', Auth::id())
+                ->whereKey($appointment)
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            $currentStatus = $lockedAppointment->status;
-
-            if (
-                !in_array($currentStatus, [
-                    AppointmentStatus::PENDING,
-                    AppointmentStatus::ACCEPTED,
-                ], true)
-            ) {
+            if (!in_array($record->status, [
+                AppointmentStatus::PENDING,
+                AppointmentStatus::ACCEPTED,
+            ], true)) {
                 throw ValidationException::withMessages([
-                    'appointment' => 'This appointment can no longer be rescheduled.',
+                    'appointment' => 'Only pending or accepted appointments can be rescheduled.',
                 ]);
             }
 
-            $conflict = Appointment::where('doctor_id', $lockedAppointment->doctor_id)
+            if ($record->requested_date && $record->requested_time) {
+                throw ValidationException::withMessages([
+                    'appointment' => 'A reschedule request is already waiting for the doctor.',
+                ]);
+            }
+
+            if (
+                $record->date?->toDateString() === $newDate &&
+                substr((string) $record->time, 0, 5) === $newTime
+            ) {
+                throw ValidationException::withMessages([
+                    'time' => 'Choose a different date or time.',
+                ]);
+            }
+
+            $conflict = Appointment::where('doctor_id', $record->doctor_id)
                 ->whereDate('date', $newDate)
-                ->where('time', $newTime)
-                ->where('id', '!=', $lockedAppointment->id)
+                ->whereTime('time', $newTime)
+                ->where('id', '!=', $record->id)
                 ->whereIn('status', [
                     AppointmentStatus::PENDING->value,
                     AppointmentStatus::ACCEPTED->value,
@@ -131,17 +146,17 @@ class AppointmentController extends Controller
 
             if ($conflict) {
                 throw ValidationException::withMessages([
-                    'time' => 'This appointment slot is no longer available.',
+                    'time' => 'That appointment slot is already booked.',
                 ]);
             }
 
-            $lockedAppointment->date = $newDate;
-            $lockedAppointment->time = $newTime;
-            $lockedAppointment->status = AppointmentStatus::PENDING;
-            $lockedAppointment->accepted_at = null;
-            $lockedAppointment->save();
+            // Leave the original date, time and status untouched.
+            $record->requested_date = $newDate;
+            $record->requested_time = $newTime;
+            $record->reschedule_requested_at = now();
+            $record->save();
 
-            return $lockedAppointment->fresh()->load([
+            return $record->fresh()->load([
                 'patient',
                 'doctor.user',
                 'hospital',
@@ -149,26 +164,28 @@ class AppointmentController extends Controller
         });
 
         return response()->json([
-            'message' => 'Appointment rescheduled successfully. The doctor must review the new time.',
-            'appointment' => $updatedAppointment,
+            'message' => 'Your reschedule request has been sent to the doctor.',
+            'appointment' => new AppointmentResource($updatedAppointment),
         ]);
     }
 
-
-    // View doctor's appointments
+    /**
+     * Return the doctor's appointments, including any pending reschedule requests.
+     */
     public function doctorAppointments(Request $request)
     {
         $doctor = Doctor::where('user_id', Auth::id())->firstOrFail();
 
         $query = Appointment::where('doctor_id', $doctor->id)
-            ->with(['patient']);
+            ->with(['patient', 'doctor.user']);
 
-        if ($request->has('date')) {
-            $query->where('date', $request->date);
+        if ($request->filled('date')) {
+            $query->whereDate('date', $request->query('date'));
         }
 
-
-        $appointments = $query->orderBy('time', 'asc')->get();
+        $appointments = $query
+            ->orderBy('time')
+            ->get();
 
         return AppointmentResource::collection($appointments);
     }

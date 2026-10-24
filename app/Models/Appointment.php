@@ -25,6 +25,9 @@ class Appointment extends Model
         'checked_in_at',
         'accepted_at',
         'rejected_at',
+        'requested_date',
+        'requested_time',
+        'reschedule_requested_at',
         'started_at',
         'completed_at',
         'cancelled_at',
@@ -43,6 +46,8 @@ class Appointment extends Model
         'rejected_at' => 'datetime',
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
+        'requested_date' => 'date',
+        'reschedule_requested_at' => 'datetime',
         'cancelled_at' => 'datetime',
         'hidden_at' => 'datetime',
     ];

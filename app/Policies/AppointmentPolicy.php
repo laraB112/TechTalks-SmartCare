@@ -33,7 +33,7 @@ class AppointmentPolicy
         }
 
         return $user->role === 'doctor'
-            && $appointment->doctor
+            && $appointment->doctor !== null
             && $appointment->doctor->user_id === $user->id;
     }
 

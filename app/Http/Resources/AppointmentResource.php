@@ -18,6 +18,16 @@ class AppointmentResource extends JsonResource
             'appointment_date' => $this->date?->toDateString(),
             'time_slot' => $this->time,
 
+            'requested_date' => $this->requested_date?->toDateString(),
+            'requested_time' => $this->requested_time
+                ? substr((string) $this->requested_time, 0, 5)
+                : null,
+            'reschedule_requested_at' =>
+                $this->reschedule_requested_at?->toDateTimeString(),
+            'has_reschedule_request' =>
+                $this->requested_date !== null
+                && $this->requested_time !== null,
+
             'notes' => $this->notes,
 
             'doctor' => [
@@ -28,9 +38,9 @@ class AppointmentResource extends JsonResource
             'patient' => [
                 'id' => $this->patient?->id,
                 'name' => $this->patient?->name,
-                'phone' => $this->patient?->phone,   
-                'age' => $this->patient?->age,       
-                'gender' => $this->patient?->gender, 
+                'phone' => $this->patient?->phone,
+                'age' => $this->patient?->age,
+                'gender' => $this->patient?->gender,
             ],
 
             'rejection_reason' => $this->rejection_reason,
