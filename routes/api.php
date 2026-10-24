@@ -32,6 +32,11 @@ Route::get('specializations', [SpecializationController::class, 'index']);
 // ================================================
 Route::middleware('auth:sanctum')->group(function () {
 
+    Route::post(
+        '/patient/appointments/{appointment}/hide',
+        [AppointmentController::class, 'hide']
+    );
+
     // User
     Route::get('/user', function (Request $request) {
         return $request->user();

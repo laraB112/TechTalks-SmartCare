@@ -15,36 +15,45 @@ class AppointmentCancelController extends Controller
             $appointment = Appointment::where('patient_id', Auth::id())
                 ->findOrFail($id);
 
-            //Check if appointment can be cancelled
+            // Get the string value from the AppointmentStatus enum.
+            $status = $appointment->status instanceof \App\Enums\AppointmentStatus
+                ? $appointment->status->value
+                : (string) $appointment->status;
+
+            // Check if appointment can be cancelled.
             $allowedStatuses = ['pending', 'accepted', 'waiting'];
-            if (!in_array(strtolower($appointment->status), $allowedStatuses)) {
+
+            if (!in_array(strtolower($status), $allowedStatuses, true)) {
                 return response()->json([
-                    'message' => 'This appointment cannot be cancelled because it is already ' . $appointment->status
+                    'message' => 'This appointment cannot be cancelled because it is already ' . $status,
                 ], 400);
             }
 
-            // Check if appointment is in the future
-            if ($appointment->date < now()->toDateString()) {
+            // Check if appointment is in the future.
+            if ($appointment->date->toDateString() < now()->toDateString()) {
                 return response()->json([
-                    'message' => 'Cannot cancel past appointments'
+                    'message' => 'Cannot cancel past appointments',
                 ], 400);
             }
 
-            $appointment->status = 'cancelled';
+            $appointment->status = \App\Enums\AppointmentStatus::CANCELLED;
             $appointment->cancelled_at = now();
             $appointment->cancelled_by = Auth::id();
-            $appointment->cancellation_reason = $request->reason ?? 'Cancelled by patient';
+            $appointment->cancellation_reason = $request->input(
+                'reason',
+                'Cancelled by patient'
+            );
 
             $appointment->save();
 
             return response()->json([
                 'message' => 'Appointment cancelled successfully',
-                'appointment' => $appointment
+                'appointment' => $appointment,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error cancelling appointment',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

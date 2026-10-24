@@ -40,31 +40,47 @@ class AppointmentController extends Controller
     }
 
     // View patient's appointments
+    // View patient's visible appointments
     public function index()
     {
         $appointments = Appointment::where('patient_id', Auth::id())
+            ->whereNull('hidden_at')
             ->with(['doctor.user', 'hospital'])
             ->orderBy('date', 'asc')
             ->get();
 
         return response()->json($appointments);
     }
+    // Hide an appointment from the patient's list
+    public function hide($appointment)
+    {
+        $appointment = Appointment::where('id', $appointment)
+            ->where('patient_id', Auth::id())
+            ->firstOrFail();
+
+        $appointment->hidden_at = now();
+        $appointment->save();
+
+        return response()->json([
+            'message' => 'Appointment hidden successfully.',
+        ]);
+    }
 
     // View doctor's appointments
     public function doctorAppointments(Request $request)
-{
-    $doctor = Doctor::where('user_id', Auth::id())->firstOrFail();
+    {
+        $doctor = Doctor::where('user_id', Auth::id())->firstOrFail();
 
-    $query = Appointment::where('doctor_id', $doctor->id)
-        ->with(['patient']);
+        $query = Appointment::where('doctor_id', $doctor->id)
+            ->with(['patient']);
 
-    if ($request->has('date')) {
-        $query->where('date', $request->date);
+        if ($request->has('date')) {
+            $query->where('date', $request->date);
+        }
+
+
+        $appointments = $query->orderBy('time', 'asc')->get();
+
+        return AppointmentResource::collection($appointments);
     }
-   
-
-    $appointments = $query->orderBy('time', 'asc')->get();
-
-    return AppointmentResource::collection($appointments);
-}
 }

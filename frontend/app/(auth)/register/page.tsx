@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -47,7 +46,7 @@ export default function RegisterPage() {
     }
 
     if (password.length < 8) {
-      setError("Your password must contain at least 8 characters.");
+      setError("Your password must contain at least 6 characters.");
       return;
     }
 
@@ -164,17 +163,6 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/[0.08] p-3 lg:p-4">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10">
-                  <HeartPulse className="h-5 w-5 text-cyan-200" />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold">Patient-focused care</p>
-                  <p className="mt-1 text-xs leading-relaxed text-white/65">
-                    Keep your healthcare journey organized.
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -316,7 +304,6 @@ export default function RegisterPage() {
                     <option value="">Select</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
-                    <option value="other">Other</option>
                   </select>
                 </div>
               </div>
@@ -336,7 +323,7 @@ export default function RegisterPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="At least 8 characters"
+                    placeholder="At least 6 characters"
                     className="w-full min-w-0 rounded-lg border border-slate-200 bg-slate-50/70 py-2.5 pl-8 pr-8 text-[10px] text-slate-800 outline-none transition duration-200 placeholder:text-slate-400 focus:border-[#0E7490] focus:bg-white focus:ring-2 focus:ring-[#0E7490]/15 sm:rounded-xl sm:py-3 sm:pl-10 sm:pr-10 sm:text-sm"
                   />
                   <button
@@ -353,7 +340,7 @@ export default function RegisterPage() {
                   </button>
                 </div>
                 <p className="mt-1 text-[8px] text-slate-400 sm:text-[11px]">
-                  Use at least 8 characters.
+                  Use at least 6 characters.
                 </p>
               </div>
 

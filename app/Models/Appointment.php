@@ -32,6 +32,7 @@ class Appointment extends Model
         'consultation_notes',
         'cancelled_by',
         'cancellation_reason',
+        'hidden_at',
     ];
 
     protected $casts = [
@@ -43,6 +44,7 @@ class Appointment extends Model
         'started_at' => 'datetime',
         'completed_at' => 'datetime',
         'cancelled_at' => 'datetime',
+        'hidden_at' => 'datetime',
     ];
 
     public function patient(): BelongsTo
@@ -101,18 +103,13 @@ class Appointment extends Model
     ): void {
         $currentStatus = $this->status;
 
-        if (! $currentStatus->canTransitionTo($target)) {
+        if (!$currentStatus->canTransitionTo($target)) {
             throw new \DomainException(
                 "Cannot transition appointment from {$currentStatus->label()} to {$target->label()}."
             );
         }
 
-        DB::transaction(function () use (
-            $target,
-            $performedBy,
-            $note,
-            $currentStatus
-        ) {
+        DB::transaction(function () use ($target, $performedBy, $note, $currentStatus) {
             $this->status = $target;
 
             switch ($target) {

@@ -101,19 +101,17 @@ export default function LoginPage() {
           </Link>
 
           <div className="relative z-10 my-6 sm:my-10">
-            <span className="mb-3 inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[9px] font-medium sm:mb-5 sm:gap-2 sm:px-3 sm:text-xs">
-             
+            <span className="mb-3 inline-flex items-center gap-1 rounded-full border border-white/20 bg-white/10 px-2 py-1 text-[8px] font-medium sm:mb-5 sm:gap-2 sm:px-3 sm:text-xs">
               Your health, simplified
             </span>
 
-            <h1 className="text-lg font-bold leading-tight tracking-tight sm:text-3xl lg:text-5xl">
+            <h1 className="text-lg font-bold leading-tight tracking-tight sm:text-2xl lg:text-5xl">
               Welcome
               <span className="mt-1 block text-cyan-200">back.</span>
             </h1>
 
             <p className="mt-3 text-[10px] leading-relaxed text-white/75 sm:mt-5 sm:text-sm sm:leading-7 lg:text-base">
-              Your healthcare journey, all in one place. Sign in to manage
-              appointments and stay connected with your care team.
+             Sign in to manage your appointments and health information.
             </p>
 
             <div className="mt-5 hidden items-center gap-3 rounded-xl border border-white/15 bg-white/[0.08] p-3 sm:flex lg:mt-8 lg:p-4">

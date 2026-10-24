@@ -298,7 +298,7 @@ export default function AppointmentsPage() {
       const response = await fetch(
         `${API_URL}/patient/appointments/${appointment.id}/hide`,
         {
-          method: "PATCH",
+          method: "POST",
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
