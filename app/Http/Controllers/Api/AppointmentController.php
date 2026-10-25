@@ -99,20 +99,18 @@ class AppointmentController extends Controller
             ]);
         }
 
-        $updatedAppointment = DB::transaction(function () use (
-            $appointment,
-            $newDate,
-            $newTime
-        ) {
+        $updatedAppointment = DB::transaction(function () use ($appointment, $newDate, $newTime) {
             $record = Appointment::where('patient_id', Auth::id())
                 ->whereKey($appointment)
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            if (!in_array($record->status, [
-                AppointmentStatus::PENDING,
-                AppointmentStatus::ACCEPTED,
-            ], true)) {
+            if (
+                !in_array($record->status, [
+                    AppointmentStatus::PENDING,
+                    AppointmentStatus::ACCEPTED,
+                ], true)
+            ) {
                 throw ValidationException::withMessages([
                     'appointment' => 'Only pending or accepted appointments can be rescheduled.',
                 ]);
@@ -150,11 +148,18 @@ class AppointmentController extends Controller
                 ]);
             }
 
+
             // Leave the original date, time and status untouched.
             $record->requested_date = $newDate;
             $record->requested_time = $newTime;
             $record->reschedule_requested_at = now();
+
+            // Clear the previous decision for this new request.
+            $record->reschedule_decision = null;
+            $record->reschedule_decided_at = null;
+
             $record->save();
+
 
             return $record->fresh()->load([
                 'patient',

@@ -1,8 +1,10 @@
 "use client";
 
-import { CalendarPlus, Stethoscope, ArrowUpRight } from "lucide-react";
+import { CalendarPlus, ArrowUpRight } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import type { Doctor } from "./doctor";
+import { specialties } from "./specialties";
 
 type DoctorCardProps = {
   doctor: Doctor;
@@ -12,9 +14,19 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
   const router = useRouter();
   const experience = Number(doctor.experience) || 0;
 
+  const doctorName = doctor.name || "Unknown";
+  const doctorSpecialty = doctor.specialty?.trim() || "General";
+
+  const matchedSpecialty = specialties.find(
+    (specialty) =>
+      specialty.name.toLowerCase() === doctorSpecialty.toLowerCase()
+  );
+
+  const specialtyImage = matchedSpecialty?.icon || "/images/stethoscope.png";
+
   const handleBookAppointment = () => {
     router.push(
-      `/patient/dashboard/book-appointment?doctorId=${doctor.id}`
+      `/ patient / dashboard / book - appointment ? doctorId = ${ encodeURIComponent(String(doctor.id)) } `
     );
   };
 
@@ -35,26 +47,31 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
         sm:hover:-translate-y-1.5 sm:hover:scale-[1.015]
       "
     >
-      {/* Decorative accent */}
       <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-[#075C70] via-[#20A5B5] to-[#B8E7EC] opacity-90" />
 
-      {/* Doctor details */}
-      <div className="min-w-0 pt-1">
-        <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#E4F6F8] to-[#C9EAF0] text-[#075C70] transition-transform duration-300 group-hover:rotate-[-5deg] group-hover:scale-110 sm:mb-3 sm:h-10 sm:w-10">
-          <Stethoscope className="h-4 w-4 sm:h-5 sm:w-5" />
-        </div>
+      {/* Specialty image */}
+      <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#E4F6F8] to-[#C9EAF0] transition-transform duration-300 group-hover:rotate-[-5deg] group-hover:scale-110 sm:mb-3 sm:h-10 sm:w-10">
+        <Image
+          src={specialtyImage}
+          alt={`${ doctorSpecialty } icon`}
+          width={24}
+          height={24}
+          className="h-4 w-4 object-contain sm:h-5 sm:w-5"
+        />
+      </div>
 
+      <div className="min-w-0 pt-1">
         <p className="text-[9px] font-bold uppercase tracking-[0.08em] text-[#0E7490] sm:text-[10px] sm:tracking-[0.12em]">
           Medical specialist
         </p>
 
         <h3 className="mt-1.5 break-words text-sm font-bold leading-snug text-slate-900 sm:mt-2 sm:text-lg">
-          Dr. {doctor.name || "Unknown"}
+          Dr. {doctorName}
         </h3>
 
         <div className="mt-2 min-h-8 sm:mt-3">
           <span className="inline-block max-w-full rounded-lg border border-[#D9EFF3] bg-[#EFF9FB] px-1.5 py-1 text-[10px] font-semibold leading-snug text-[#075C70] [overflow-wrap:anywhere] sm:px-2.5 sm:py-1.5 sm:text-xs">
-            {doctor.specialty || "General"}
+            {doctorSpecialty}
           </span>
         </div>
       </div>
@@ -63,12 +80,11 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
 
       {/* Experience */}
       <div className="mb-3 flex min-w-0 items-center gap-1.5 sm:mb-5 sm:gap-2.5">
-     
-
         <div className="min-w-0">
           <p className="text-[9px] leading-tight text-slate-500 sm:text-xs">
             Experience
           </p>
+
           <p className="mt-1 break-words text-xs font-bold leading-tight text-slate-800 sm:text-sm">
             {experience} {experience === 1 ? "year" : "years"}
           </p>
@@ -79,7 +95,7 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
       <button
         type="button"
         onClick={handleBookAppointment}
-        aria-label={`Book an appointment with Dr. ${doctor.name || "Unknown"}`}
+        aria-label={`Book an appointment with Dr.${ doctorName } `}
         className="
           group/button relative mt-auto flex min-h-10 w-full min-w-0
           items-center justify-center gap-1 overflow-hidden rounded-xl
@@ -98,9 +114,7 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
 
         <CalendarPlus className="relative h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
 
-        <span className="relative text-center">
-          Book appointment
-        </span>
+        <span className="relative text-center">Book appointment</span>
 
         <ArrowUpRight className="relative hidden h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover/button:-translate-y-0.5 group-hover/button:translate-x-0.5 sm:block" />
       </button>

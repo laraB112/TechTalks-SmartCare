@@ -15,6 +15,9 @@ class AppointmentResource extends JsonResource
             'status' => $this->status->value,
             'status_label' => $this->status->label(),
 
+            'reschedule_decision' => $this->reschedule_decision,
+            'reschedule_decided_at' => $this->reschedule_decided_at?->toDateTimeString(),
+
             'appointment_date' => $this->date?->toDateString(),
             'time_slot' => $this->time,
 

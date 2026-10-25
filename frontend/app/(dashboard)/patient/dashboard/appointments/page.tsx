@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -5,7 +6,6 @@ import { useRouter } from "next/navigation";
 import {
   CalendarDays,
   Clock3,
-  UserRound,
   LoaderCircle,
   CalendarPlus,
   CheckCircle2,
@@ -15,15 +15,15 @@ import {
   Trash2,
   EyeOff,
   RefreshCw,
-  ArrowRight,
   Stethoscope,
   CalendarCheck,
   Hourglass,
   Search,
   X,
-  ChevronRight,
   ClipboardList,
   Check,
+  AlertTriangle,
+  MessageSquareText,
 } from "lucide-react";
 
 interface Appointment {
@@ -31,6 +31,8 @@ interface Appointment {
   date: string;
   time: string;
   status: string;
+  rejection_reason?: string | null;
+  reschedule_rejection_reason?: string | null;
   queue_position?: number;
   doctor: {
     id: number;
@@ -162,6 +164,10 @@ export default function AppointmentsPage() {
   const [selectedAppointment, setSelectedAppointment] =
     useState<Appointment | null>(null);
 
+  const [showReasonModal, setShowReasonModal] = useState(false);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [reasonTitle, setReasonTitle] = useState("Rejection reason");
+
   const [cancelReason, setCancelReason] = useState("");
   const [newDate, setNewDate] = useState("");
   const [newTime, setNewTime] = useState("");
@@ -222,6 +228,27 @@ export default function AppointmentsPage() {
     }
   };
 
+  const openReasonModal = (
+    reason: string | null | undefined,
+    title = "Rejection reason"
+  ) => {
+    if (!reason?.trim()) return;
+
+    setSelectedReason(reason.trim());
+    setReasonTitle(title);
+    setShowReasonModal(true);
+  };
+
+  const getRejectionReason = (appointment: Appointment) => {
+    if (normalizeStatus(appointment.status) !== "rejected") return null;
+
+    return (
+      appointment.rejection_reason?.trim() ||
+      appointment.reschedule_rejection_reason?.trim() ||
+      null
+    );
+  };
+
   const canCancel = (appointment: Appointment) =>
     isActiveStatus(appointment.status) &&
     appointment.date?.split("T")[0] >= getLocalDate();
@@ -239,12 +266,10 @@ export default function AppointmentsPage() {
 
   const nextAppointment = upcomingAppointments[0] || null;
 
-  const completedCount = appointments.filter(
-    (a) => normalizeStatus(a.status) === "completed"
-  ).length;
-
-  const pendingCount = appointments.filter((a) =>
-    ["pending", "accepted", "waiting"].includes(normalizeStatus(a.status))
+  const pendingCount = appointments.filter((appointment) =>
+    ["pending", "accepted", "waiting"].includes(
+      normalizeStatus(appointment.status)
+    )
   ).length;
 
   const filteredAppointments = appointments
@@ -409,6 +434,11 @@ export default function AppointmentsPage() {
     try {
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
       const response = await fetch(
         `${API_URL}/doctors/${selectedAppointment.doctor.id}/available-slots?date=${encodeURIComponent(date)}`,
         {
@@ -480,11 +510,13 @@ export default function AppointmentsPage() {
         current.map((appointment) =>
           appointment.id === selectedAppointment.id
             ? {
-                ...appointment,
-                date: newDate,
-                time: newTime,
-                status: "pending",
-              }
+              ...appointment,
+              date: newDate,
+              time: newTime,
+              status: "pending",
+              rejection_reason: null,
+              reschedule_rejection_reason: null,
+            }
             : appointment
         )
       );
@@ -530,7 +562,9 @@ export default function AppointmentsPage() {
           <LoaderCircle className="absolute -right-2 -top-2 h-6 w-6 animate-spin text-[#0E7490]" />
         </div>
         <div className="text-center">
-          <p className="font-semibold text-slate-800">Loading your appointments</p>
+          <p className="font-semibold text-slate-800">
+            Loading your appointments
+          </p>
           <p className="mt-1 text-sm text-slate-500">
             Just a moment while we get everything ready.
           </p>
@@ -599,7 +633,7 @@ export default function AppointmentsPage() {
                   Your appointment history
                 </p>
               </div>
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg sm:h-8 sm:w-8 bg-[#EAF7FB] transition duration-300">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#EAF7FB] transition duration-300 sm:h-8 sm:w-8">
                 <ClipboardList className="h-3.5 w-3.5 shrink-0 text-[#075C70] sm:h-4 sm:w-4" />
               </div>
             </div>
@@ -618,7 +652,7 @@ export default function AppointmentsPage() {
                   Scheduled ahead
                 </p>
               </div>
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg sm:h-8 sm:w-8 bg-cyan-50 transition duration-300">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-cyan-50 transition duration-300 sm:h-8 sm:w-8">
                 <CalendarCheck className="h-3.5 w-3.5 shrink-0 text-cyan-700 sm:h-4 sm:w-4" />
               </div>
             </div>
@@ -637,7 +671,7 @@ export default function AppointmentsPage() {
                   Pending or confirmed
                 </p>
               </div>
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg sm:h-8 sm:w-8 bg-amber-50 transition duration-300">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-amber-50 transition duration-300 sm:h-8 sm:w-8">
                 <Hourglass className="h-3.5 w-3.5 shrink-0 text-amber-600 sm:h-4 sm:w-4" />
               </div>
             </div>
@@ -655,7 +689,6 @@ export default function AppointmentsPage() {
               <div className="relative flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
                 <div className="min-w-0 flex-1">
                   <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.15em] text-cyan-50">
-                    
                     Your next visit
                   </div>
 
@@ -773,11 +806,10 @@ export default function AppointmentsPage() {
                   <button
                     key={item.id}
                     onClick={() => setFilter(item.id)}
-                    className={`shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 sm:px-4 sm:text-sm ${
-                      filter === item.id
+                    className={`shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 sm:px-4 sm:text-sm ${filter === item.id
                         ? "bg-white text-[#075C70] shadow-sm"
                         : "text-slate-500 hover:text-slate-800"
-                    }`}
+                      }`}
                   >
                     {item.label}
                   </button>
@@ -860,6 +892,7 @@ export default function AppointmentsPage() {
                       {filteredAppointments.map((appointment) => {
                         const status = getStatusConfig(appointment.status);
                         const StatusIcon = status.icon;
+                        const rejectionReason = getRejectionReason(appointment);
 
                         return (
                           <tr
@@ -881,6 +914,7 @@ export default function AppointmentsPage() {
                                 </div>
                               </div>
                             </td>
+
                             <td className="px-3 py-4 xl:px-5">
                               <p className="text-sm font-semibold text-slate-700">
                                 {formatDate(appointment.date)}
@@ -890,6 +924,7 @@ export default function AppointmentsPage() {
                                 {formatTime(appointment.time)}
                               </p>
                             </td>
+
                             <td className="px-3 py-4 xl:px-5">
                               <span
                                 className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold ${status.className}`}
@@ -898,8 +933,27 @@ export default function AppointmentsPage() {
                                 {status.label}
                               </span>
                             </td>
+
                             <td className="px-3 py-4 xl:px-5">
                               <div className="flex flex-wrap items-center justify-end gap-2">
+                                {rejectionReason && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      openReasonModal(
+                                        rejectionReason,
+                                        appointment.reschedule_rejection_reason?.trim()
+                                          ? "Reschedule rejection reason"
+                                          : "Appointment rejection reason"
+                                      )
+                                    }
+                                    className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-100"
+                                  >
+                                    <MessageSquareText className="h-3.5 w-3.5" />
+                                    View reason
+                                  </button>
+                                )}
+
                                 {canReschedule(appointment) && (
                                   <button
                                     onClick={() => openRescheduleModal(appointment)}
@@ -910,6 +964,7 @@ export default function AppointmentsPage() {
                                     Reschedule
                                   </button>
                                 )}
+
                                 {canCancel(appointment) && (
                                   <button
                                     onClick={() => openCancelModal(appointment)}
@@ -920,6 +975,7 @@ export default function AppointmentsPage() {
                                     <Trash2 className="h-4 w-4" />
                                   </button>
                                 )}
+
                                 {canHide(appointment) && (
                                   <button
                                     onClick={() => void hideAppointment(appointment)}
@@ -936,7 +992,9 @@ export default function AppointmentsPage() {
                                     Hide
                                   </button>
                                 )}
-                                {!canReschedule(appointment) &&
+
+                                {!rejectionReason &&
+                                  !canReschedule(appointment) &&
                                   !canCancel(appointment) &&
                                   !canHide(appointment) && (
                                     <span className="text-xs text-slate-400">
@@ -957,11 +1015,14 @@ export default function AppointmentsPage() {
                   {filteredAppointments.map((appointment, index) => {
                     const status = getStatusConfig(appointment.status);
                     const StatusIcon = status.icon;
+                    const rejectionReason = getRejectionReason(appointment);
 
                     return (
                       <article
                         key={appointment.id}
-                        style={{ animationDelay: `${Math.min(index * 50, 300)}ms` }}
+                        style={{
+                          animationDelay: `${Math.min(index * 50, 300)}ms`,
+                        }}
                         className="animate-[fadeUp_.4s_ease-out_both] rounded-xl border border-slate-200/80 bg-white p-3 transition duration-200 hover:border-[#B9DFE8]"
                       >
                         <div className="flex items-start justify-between gap-3">
@@ -1008,6 +1069,7 @@ export default function AppointmentsPage() {
                             <StatusIcon className="h-3.5 w-3.5" />
                             {status.label}
                           </span>
+
                           {appointment.queue_position != null && (
                             <span className="text-xs font-semibold text-[#0E7490]">
                               Queue #{appointment.queue_position}
@@ -1015,50 +1077,81 @@ export default function AppointmentsPage() {
                           )}
                         </div>
 
-                        {(canReschedule(appointment) || canCancel(appointment) || canHide(appointment)) && (
-                          <div className={`mt-4 grid gap-2 border-t border-slate-100 pt-4 ${
-                            [canReschedule(appointment), canCancel(appointment), canHide(appointment)].filter(Boolean).length === 1
-                              ? "grid-cols-1"
-                              : [canReschedule(appointment), canCancel(appointment), canHide(appointment)].filter(Boolean).length === 2
-                                ? "grid-cols-2"
-                                : "grid-cols-1 sm:grid-cols-3"
-                          }`}>
-                            {canReschedule(appointment) && (
-                              <button
-                                onClick={() => openRescheduleModal(appointment)}
-                                disabled={rescheduling === appointment.id}
-                                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#EAF7FB] px-2 py-2 text-[11px] font-semibold text-[#075C70] transition hover:bg-[#D9F0F6] disabled:opacity-50"
-                              >
-                                <RefreshCw className="h-3.5 w-3.5" />
-                                Reschedule
-                              </button>
-                            )}
-                            {canCancel(appointment) && (
-                              <button
-                                onClick={() => openCancelModal(appointment)}
-                                disabled={cancelling === appointment.id}
-                                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-rose-50 px-2 py-2 text-[11px] font-semibold text-rose-600 transition hover:bg-rose-100 disabled:opacity-50"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" />
-                                Cancel
-                              </button>
-                            )}
-                            {canHide(appointment) && (
-                              <button
-                                onClick={() => void hideAppointment(appointment)}
-                                disabled={hiding === appointment.id}
-                                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2 py-2 text-[11px] font-semibold text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
-                              >
-                                {hiding === appointment.id ? (
-                                  <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
-                                ) : (
-                                  <EyeOff className="h-3.5 w-3.5" />
-                                )}
-                                Hide
-                              </button>
-                            )}
-                          </div>
+                        {rejectionReason && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openReasonModal(
+                                rejectionReason,
+                                appointment.reschedule_rejection_reason?.trim()
+                                  ? "Reschedule rejection reason"
+                                  : "Appointment rejection reason"
+                              )
+                            }
+                            className="mt-3 inline-flex min-h-9 w-full items-center justify-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-100"
+                          >
+                            <MessageSquareText className="h-3.5 w-3.5" />
+                            View rejection reason
+                          </button>
                         )}
+
+                        {(canReschedule(appointment) ||
+                          canCancel(appointment) ||
+                          canHide(appointment)) && (
+                            <div
+                              className={`mt-4 grid gap-2 border-t border-slate-100 pt-4 ${[
+                                  canReschedule(appointment),
+                                  canCancel(appointment),
+                                  canHide(appointment),
+                                ].filter(Boolean).length === 1
+                                  ? "grid-cols-1"
+                                  : [
+                                    canReschedule(appointment),
+                                    canCancel(appointment),
+                                    canHide(appointment),
+                                  ].filter(Boolean).length === 2
+                                    ? "grid-cols-2"
+                                    : "grid-cols-1 sm:grid-cols-3"
+                                }`}
+                            >
+                              {canReschedule(appointment) && (
+                                <button
+                                  onClick={() => openRescheduleModal(appointment)}
+                                  disabled={rescheduling === appointment.id}
+                                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#EAF7FB] px-2 py-2 text-[11px] font-semibold text-[#075C70] transition hover:bg-[#D9F0F6] disabled:opacity-50"
+                                >
+                                  <RefreshCw className="h-3.5 w-3.5" />
+                                  Reschedule
+                                </button>
+                              )}
+
+                              {canCancel(appointment) && (
+                                <button
+                                  onClick={() => openCancelModal(appointment)}
+                                  disabled={cancelling === appointment.id}
+                                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-rose-50 px-2 py-2 text-[11px] font-semibold text-rose-600 transition hover:bg-rose-100 disabled:opacity-50"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                  Cancel
+                                </button>
+                              )}
+
+                              {canHide(appointment) && (
+                                <button
+                                  onClick={() => void hideAppointment(appointment)}
+                                  disabled={hiding === appointment.id}
+                                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2 py-2 text-[11px] font-semibold text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
+                                >
+                                  {hiding === appointment.id ? (
+                                    <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+                                  ) : (
+                                    <EyeOff className="h-3.5 w-3.5" />
+                                  )}
+                                  Hide
+                                </button>
+                              )}
+                            </div>
+                          )}
                       </article>
                     );
                   })}
@@ -1081,6 +1174,66 @@ export default function AppointmentsPage() {
             </div>
           </div>
         </section>
+
+        {/* Rejection reason modal */}
+        {showReasonModal && (
+          <div
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) {
+                setShowReasonModal(false);
+              }
+            }}
+          >
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="rejection-reason-title"
+              className="w-full max-w-md rounded-2xl border border-slate-100 bg-white p-5 shadow-2xl sm:p-6"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-50">
+                    <AlertTriangle className="h-5 w-5 text-rose-600" />
+                  </div>
+
+                  <div>
+                    <h2
+                      id="rejection-reason-title"
+                      className="text-lg font-bold text-slate-900"
+                    >
+                      {reasonTitle}
+                    </h2>
+                    <p className="mt-1 text-sm text-slate-500">
+                      Details provided by the doctor
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowReasonModal(false)}
+                  aria-label="Close rejection reason"
+                  className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="mt-5 whitespace-pre-wrap break-words rounded-xl border border-rose-100 bg-rose-50/60 p-4 text-sm leading-6 text-slate-700">
+                {selectedReason}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowReasonModal(false)}
+                className="mt-5 w-full rounded-xl bg-[#075C70] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#064957] focus:outline-none focus:ring-4 focus:ring-cyan-100"
+              >
+                Close
+              </button>
+            </section>
+          </div>
+        )}
 
         {/* Cancel confirmation modal */}
         {showCancelModal && selectedAppointment && (
@@ -1286,11 +1439,10 @@ export default function AppointmentsPage() {
                             key={slot}
                             type="button"
                             onClick={() => setNewTime(slot)}
-                            className={`rounded-xl border px-2 py-3 text-sm font-semibold transition duration-200 ${
-                              newTime === slot
+                            className={`rounded-xl border px-2 py-3 text-sm font-semibold transition duration-200 ${newTime === slot
                                 ? "border-[#075C70] bg-[#075C70] text-white shadow-md shadow-cyan-900/10"
                                 : "border-[#DCEEF3] bg-white text-slate-600 hover:border-[#0E7490] hover:bg-[#F0FAFC] hover:text-[#075C70]"
-                            }`}
+                              }`}
                           >
                             {newTime === slot && (
                               <Check className="mr-1 inline h-3.5 w-3.5" />

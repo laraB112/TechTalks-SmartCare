@@ -146,11 +146,7 @@ export default function SymptomChecker() {
 
   return (
     <main className="mx-auto w-full min-w-0 max-w-[1500px] space-y-8 pb-8 sm:space-y-10">
-      {/* Hero */}
 
-      {/* Hero */}
-
-      {/* Hero */}
       {/* Hero */}
       <section className="relative isolate overflow-hidden rounded-2xl bg-gradient-to-br from-[#064B5B] via-[#075C70] to-[#0E8498] text-white shadow-[0_8px_24px_rgba(7,92,112,0.13)] sm:rounded-3xl">
         {/* Background decoration */}

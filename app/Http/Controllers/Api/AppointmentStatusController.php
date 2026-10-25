@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Controllers\Api;
@@ -93,10 +92,7 @@ class AppointmentStatusController extends Controller
     ): JsonResponse {
         $this->authorize('manageStatus', $appointment);
 
-        $updatedAppointment = DB::transaction(function () use (
-            $appointment,
-            $request
-        ) {
+        $updatedAppointment = DB::transaction(function () use ($appointment, $request) {
             $record = Appointment::whereKey($appointment->id)
                 ->lockForUpdate()
                 ->firstOrFail();
@@ -107,10 +103,12 @@ class AppointmentStatusController extends Controller
                 ]);
             }
 
-            if (!in_array($record->status, [
-                AppointmentStatus::PENDING,
-                AppointmentStatus::ACCEPTED,
-            ], true)) {
+            if (
+                !in_array($record->status, [
+                    AppointmentStatus::PENDING,
+                    AppointmentStatus::ACCEPTED,
+                ], true)
+            ) {
                 throw ValidationException::withMessages([
                     'appointment' => 'This appointment can no longer be rescheduled.',
                 ]);
@@ -142,7 +140,18 @@ class AppointmentStatusController extends Controller
                 ]);
             }
 
-            // Preserve the appointment's current status.
+            // Save the doctor's decision before clearing the request.
+            $record->date = $requestedDate;
+            $record->time = $requestedTime;
+
+            $record->reschedule_decision = 'approved';
+            $record->reschedule_decided_at = now();
+
+            $record->requested_date = null;
+            $record->requested_time = null;
+            $record->reschedule_requested_at = null;
+
+            $record->save();
             $record->date = $requestedDate;
             $record->time = $requestedTime;
             $record->requested_date = null;
@@ -160,7 +169,7 @@ class AppointmentStatusController extends Controller
     }
 
     /**
-     * Decline only the reschedule request, not the appointment itself.
+     * Decline only the reschedule request
      */
     public function rejectReschedule(
         Request $request,
@@ -179,9 +188,13 @@ class AppointmentStatusController extends Controller
                 ]);
             }
 
+            $record->reschedule_decision = 'rejected';
+            $record->reschedule_decided_at = now();
+
             $record->requested_date = null;
             $record->requested_time = null;
             $record->reschedule_requested_at = null;
+
             $record->save();
 
             return $record->fresh()->load(['doctor.user', 'patient']);

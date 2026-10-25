@@ -1,20 +1,10 @@
-
 "use client";
 
+import Image from "next/image";
 import {
-  HeartPulse,
-  Brain,
-  Stethoscope,
-  Bone,
-  Ear,
-  Eye,
-  Activity,
   ShieldCheck,
-  ArrowRight,
-  Sparkles,
-  CheckCircle2,
+  Stethoscope,
 } from "lucide-react";
-import type { ReactNode } from "react";
 
 type SuggestedSpecialtyProps = {
   specialty: string;
@@ -22,45 +12,45 @@ type SuggestedSpecialtyProps = {
 
 const specialtyConfig: Record<
   string,
-  { icon: ReactNode; description: string }
+  { image: string; description: string }
 > = {
   Cardiology: {
-    icon: <HeartPulse size={28} strokeWidth={1.8} />,
+    image: "/images/cardiology.png",
     description:
       "Cardiology specialists assess conditions involving the heart and circulatory system.",
   },
   Neurology: {
-    icon: <Brain size={28} strokeWidth={1.8} />,
+    image: "/images/neurons.png",
     description:
       "Neurology specialists assess conditions involving the brain, nerves, and nervous system.",
   },
   Dermatology: {
-    icon: <Sparkles size={28} strokeWidth={1.8} />,
+    image: "/images/beauty.png",
     description:
       "Dermatology specialists assess conditions involving the skin, hair, and nails.",
   },
   Orthopedics: {
-    icon: <Bone size={28} strokeWidth={1.8} />,
+    image: "/images/bone (1).png",
     description:
       "Orthopedic specialists assess conditions involving bones, joints, muscles, and ligaments.",
   },
   ENT: {
-    icon: <Ear size={28} strokeWidth={1.8} />,
+    image: "/images/nasal.png",
     description:
       "ENT specialists assess conditions involving the ears, nose, and throat.",
   },
   Ophthalmology: {
-    icon: <Eye size={28} strokeWidth={1.8} />,
+    image: "/images/eye.png",
     description:
       "Ophthalmology specialists assess conditions involving the eyes and vision.",
   },
   Gastroenterology: {
-    icon: <Activity size={28} strokeWidth={1.8} />,
+    image: "/images/intestine.png",
     description:
       "Gastroenterology specialists assess conditions involving the digestive system.",
   },
   Pulmonology: {
-    icon: <Activity size={28} strokeWidth={1.8} />,
+    image: "/images/health (1).png",
     description:
       "Pulmonology specialists assess conditions involving the lungs and respiratory system.",
   },
@@ -70,7 +60,7 @@ export default function SuggestedSpecialty({
   specialty,
 }: SuggestedSpecialtyProps) {
   const config = specialtyConfig[specialty] ?? {
-    icon: <Stethoscope size={28} strokeWidth={1.8} />,
+    image: "",
     description: `Explore doctors listed under ${specialty} to learn more about their specialty.`,
   };
 
@@ -89,10 +79,26 @@ export default function SuggestedSpecialty({
       <div className="relative p-5 sm:p-7 lg:p-8">
         {/* Recommendation content */}
         <div className="mt-6 flex min-w-0 flex-col gap-5 sm:mt-7 sm:flex-row sm:items-start sm:gap-6">
-          {/* Specialty icon */}
-          <div className="relative flex h-16 w-16 shrink-0 items-center justify-center self-start rounded-2xl bg-gradient-to-br from-[#075C70] to-[#0E8498] text-white shadow-[0_8px_18px_rgba(7,92,112,0.20)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(7,92,112,0.25)] sm:h-[76px] sm:w-[76px] sm:rounded-3xl">
-            <div className="absolute inset-1.5 rounded-[0.9rem] border border-white/15 sm:rounded-[1.15rem]" />
-            <span className="relative">{config.icon}</span>
+          {/* Specialty image */}
+          <div className="relative flex h-16 w-16 shrink-0 items-center justify-center self-start rounded-2xl bg-gradient-to-br from-[#E4F6F8] to-[#C9EAF0] shadow-[0_8px_18px_rgba(7,92,112,0.12)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_12px_24px_rgba(7,92,112,0.18)] sm:h-[76px] sm:w-[76px] sm:rounded-3xl">
+            <div className="absolute inset-1.5 rounded-[0.9rem] border border-white/70 sm:rounded-[1.15rem]" />
+
+            {config.image ? (
+              <Image
+                src={config.image}
+                alt={`${specialty} illustration`}
+                width={48}
+                height={48}
+                className="relative h-9 w-9 object-contain sm:h-11 sm:w-11"
+                priority
+              />
+            ) : (
+              <Stethoscope
+                size={30}
+                strokeWidth={1.8}
+                className="relative text-[#075C70]"
+              />
+            )}
           </div>
 
           {/* Text */}

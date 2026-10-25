@@ -36,6 +36,8 @@ class Appointment extends Model
         'cancelled_by',
         'cancellation_reason',
         'hidden_at',
+        'reschedule_decision',
+        'reschedule_decided_at',
     ];
 
     protected $casts = [
@@ -50,6 +52,7 @@ class Appointment extends Model
         'reschedule_requested_at' => 'datetime',
         'cancelled_at' => 'datetime',
         'hidden_at' => 'datetime',
+        'reschedule_decided_at' => 'datetime',
     ];
 
     public function patient(): BelongsTo
